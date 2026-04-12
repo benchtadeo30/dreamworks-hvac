@@ -684,7 +684,7 @@
                             document.getElementById("termsError").textContent = response.error
                             return;
                         }
-                        if(response.error === 'Password must be atleast 8 characters including uppercase, numbers, and symbols'){
+                        if(response.error === "Password must be at least 8 characters including uppercase, numbers, and symbols"){
                             document.getElementById("errAllFields").textContent = ""
                             document.getElementById("fnameError").textContent = ""
                             document.getElementById("emailError").textContent = ""
@@ -710,7 +710,7 @@
                             document.getElementById("pwd_cfError").textContent = response.error
                             return;
                         }
-                        if(response.error === 'Passwords does not match!'){
+                        if(response.error === 'Passwords do not match!'){
                             document.getElementById("errAllFields").textContent = ""
                             document.getElementById("fnameError").textContent = ""
                             document.getElementById("emailError").textContent = ""

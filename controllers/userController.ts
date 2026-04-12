@@ -74,7 +74,7 @@ export const registerUser = async (
   if (!validator.isAlpha(regFirstName, "en-US", { ignore: " ." })) {
     return next(
       new AppError(
-        "Firstname must be alphabetical only (e.g. Dr. John, Joe)",
+        "Firstname must be alphabetical letter only (e.g. Dr. John, Joe)",
         400
       )
     );
@@ -87,7 +87,7 @@ export const registerUser = async (
   if (!validator.isAlpha(regLastName, "en-US", { ignore: " ." })) {
     return next(
       new AppError(
-        "Lastname must be alphabetical only (e.g. Dr. John, Joe)",
+        "Lastname must be alphabetical letter only (e.g. Dr. John, Joe)",
         400
       )
     );
@@ -100,7 +100,7 @@ export const registerUser = async (
   if (!validator.isMobilePhone(regPhone, "en-PH")) {
     return next(
       new AppError(
-        "Invalid Phone Number! Spaces are not allowed",
+        "Invalid Phone Number! And spacing are not allowed",
         400
       )
     );
