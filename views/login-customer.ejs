@@ -525,7 +525,7 @@
             setTimeout(async() => {
 
                 try{
-                    const res = await fetch("http://localhost:3000/customer/login", {
+                    const res = await fetch("/customer/login", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
