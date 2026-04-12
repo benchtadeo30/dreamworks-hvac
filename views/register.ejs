@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account — DreamWorks HVAC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --primary: #0038FF;
+            --primary-dark: #0028CC;
+            --secondary: #00D4FF;
+            --dark: #0A0F1C;
+            --gray: #64748B;
+            --light-gray: #E2E8F0;
+            --white: #FFFFFF;
+            --success: #10B981;
+            --error: #EF4444;
+            --warning: #F59E0B;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0038FF 0%, #0028CC 50%, #1A1F35 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 75% 20%, rgba(0,212,255,0.18) 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(61,104,255,0.18) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Page Nav */
+        .page-nav {
+            max-width: 640px;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .brand-logo {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
+
+        .brand-logo span { color: var(--secondary); }
+
+        .nav-links-row { display: flex; gap: 0.5rem; }
+
+        .nav-pill {
+            padding: 0.5rem 1.1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1.5px solid rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.85);
+            background: rgba(255,255,255,0.08);
+            transition: all 0.25s;
+        }
+
+        .nav-pill:hover { background: rgba(255,255,255,0.18); color: #fff; }
+        .nav-pill.active { background: #fff; color: var(--primary); border-color: #fff; }
+
+        /* Logo */
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .logo h1 {
+            font-family: 'Barlow', sans-serif;
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .logo span { color: var(--secondary); }
+        .logo p { color: rgba(255,255,255,0.8); font-size: 0.95rem; margin-top: 0.4rem; }
+
+        /* Main Card */
+        .main-card {
+            background: var(--white);
+            border-radius: 28px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+            max-width: 640px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease 0.15s backwards;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8faff, #eef2ff);
+            padding: 2.2rem 2.5rem 1.8rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .card-header h2 {
+            font-family: 'Barlow', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .card-header p { color: var(--gray); font-size: 0.95rem; }
+
+        .card-body { padding: 2.2rem 2.5rem; }
+
+        /* Social Login */
+        .social-login { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.8rem; }
+
+        .social-btn {
+            padding: 0.85rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 12px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        .social-btn:hover { border-color: var(--primary); background: rgba(0,56,255,0.03); transform: translateY(-1px); }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.8rem 0;
+            color: var(--gray);
+            font-size: 0.88rem;
+        }
+
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--light-gray); }
+        .divider span { padding: 0 1rem; }
+
+        /* Form */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+
+        .form-group { margin-bottom: 1.2rem; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+
+        .required { color: var(--error); }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.82rem 1.1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: #fff;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0,56,255,0.1);
+        }
+
+        /* Password Strength */
+        .password-strength { margin-top: 0.5rem; }
+        .strength-bar { height: 4px; background: var(--light-gray); border-radius: 2px; overflow: hidden; margin-bottom: 0.3rem; }
+        .strength-fill { height: 100%; width: 0; transition: all 0.3s; border-radius: 2px; background: var(--error); }
+        .strength-text { font-size: 0.8rem; color: var(--gray); }
+
+        /* Checkbox */
+        .checkbox-group { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .checkbox-group input[type="checkbox"] { margin-top: 0.25rem; width: 17px; height: 17px; cursor: pointer; flex-shrink: 0; }
+        .checkbox-group label { font-size: 0.87rem; color: var(--gray); cursor: pointer; line-height: 1.5; }
+        .checkbox-group a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        .checkbox-group a:hover { text-decoration: underline; }
+
+        /* Submit */
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(0,56,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,56,255,0.4); }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        /* Auth footer */
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.8rem;
+            padding-top: 1.8rem;
+            border-top: 1px solid var(--light-gray);
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .auth-footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        .auth-footer a:hover { text-decoration: underline; }
+
+        /* Benefits strip */
+        .benefits-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            border-top: 2px solid var(--light-gray);
+        }
+
+        .benefit-item {
+            padding: 1.2rem;
+            text-align: center;
+            border-right: 1px solid var(--light-gray);
+            background: #f8faff;
+        }
+
+        .benefit-item:last-child { border-right: none; }
+        .benefit-icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+        .benefit-text { font-size: 0.78rem; color: var(--gray); font-weight: 500; line-height: 1.4; }
+
+        /* Success */
+        .success-message { display: none; text-align: center; padding: 3rem 2.5rem; }
+        .success-message.active { display: block; animation: fadeIn 0.5s ease; }
+
+        .success-icon {
+            width: 90px; height: 90px;
+            background: linear-gradient(135deg, var(--success), #059669);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.8rem;
+            font-size: 2.8rem; color: #fff;
+            animation: scaleIn 0.5s ease;
+        }
+
+        .success-message h2 { font-family: 'Barlow', sans-serif; font-size: 2rem; color: var(--dark); margin-bottom: 0.8rem; }
+        .success-message p { color: var(--gray); font-size: 0.97rem; margin-bottom: 1.5rem; }
+
+        .btn-portal {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2.2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            box-shadow: 0 5px 20px rgba(0,56,255,0.3);
+            transition: all 0.3s;
+            border: none; cursor: pointer;
+        }
+
+        .btn-portal:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,56,255,0.45); }
+
+        /* Spinner */
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 18px; height: 18px;
+            animation: spin 0.9s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { transform: scale(0); } to { transform: scale(1); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 640px) {
+            body { padding: 1rem; }
+            .card-body { padding: 1.8rem 1.5rem; }
+            .card-header { padding: 1.8rem 1.5rem 1.5rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .social-login { grid-template-columns: 1fr; }
+            .benefits-strip { grid-template-columns: 1fr; }
+            .benefit-item { border-right: none; border-bottom: 1px solid var(--light-gray); }
+            .benefit-item:last-child { border-bottom: none; }
+            .nav-links-row { gap: 0.3rem; }
+            .nav-pill { padding: 0.45rem 0.8rem; font-size: 0.78rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Page Nav -->
+    <div class="page-nav">
+        <a href="/" class="brand-logo">DREAM<span>WORKS</span></a>
+        <div class="nav-links-row">
+            <a href="/customer/login" class="nav-pill">🏠 Customer Login</a>
+        </div>
+    </div>
+
+    <!-- Logo -->
+    <div class="logo">
+        <h1>Create Your <span>Account</span></h1>
+        <p>Join DreamWorks HVAC and manage your projects online</p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="main-card">
+        <div class="card-header">
+            <h2>👤 Register</h2>
+            <p>Create your free customer account to track quotes and projects</p>
+        </div>
+
+        <!-- Benefits Strip -->
+        <div class="benefits-strip">
+            <div class="benefit-item">
+                <div class="benefit-icon">📋</div>
+                <div class="benefit-text">Track your quotes & requests</div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">📊</div>
+                <div class="benefit-text">Monitor project progress</div>
+            </div>
+            <div class="benefit-item">
+                <div class="benefit-icon">💳</div>
+                <div class="benefit-text">Easy payment & scheduling</div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Social Login -->
+            <div class="social-login">
+                <button class="social-btn">
+                    <span style="font-size:1.2rem;">G</span> Continue with Google
+                </button>
+                <button class="social-btn">
+                    <span style="font-size:1.2rem;">📘</span> Continue with Facebook
+                </button>
+            </div>
+
+            <div class="divider"><span>or register with email</span></div>
+
+            <!-- Register Form -->
+            <form id="registerForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>First Name <span class="required">*</span></label>
+                        <input type="text" name="regFirstName" placeholder="Juan">
+                <p id="fnameError" style="color: red; margin-top: 15px;"></p>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name <span class="required">*</span></label>
+                        <input type="text" name="regLastName" placeholder="Dela Cruz">
+                <p id="lnameError" style="color: red; margin-top: 15px;"></p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email Address <span class="required">*</span></label>
+                    <input type="text" name="regEmail" placeholder="juan@email.com">
+                </div>
+                <p id="emailError" style="color: red; margin-block: 15px;"></p>
+                <div class="form-group">
+                    <label>Phone Number <span class="required">*</span></label>
+                    <input type="tel" name="regPhone" placeholder="+639123456789">
+                </div>
+                <p id="phoneError" style="color: red; margin-block: 15px;"></p>
+                <div class="form-group">
+                    <label>Password <span class="required">*</span></label>
+                    <input type="password" name="regPassword" id="regPassword" placeholder="At least 8 characters">
+                    <div class="password-strength">
+                        <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+                        <div class="strength-text" id="strengthText">Password strength: —</div>
+                    </div>
+                </div>
+                <p id="pwdError" style="color: red; margin-block: 15px;"></p>
+                <div class="form-group">
+                    <label>Confirm Password <span class="required">*</span></label>
+                    <input type="password" name="regPasswordConfirm" placeholder="Repeat your password">
+                </div>
+                <p id="pwd_cfError" style="color: red; margin-block: 15px;"></p>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" name="regTermsConditions" id="termsCheck">
+                    <label for="termsCheck">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a> of DreamWorks HVAC Services</label>
+                </div>
+                <p id="termsError" style="color: red; margin-block: 15px;"></p>
+
+                <p id="errAllFields" style="color: red; font-weight: bold; text-align: center; margin-bottom: 15px;"></p>
+                <p id="regError" style="color: red; font-weight: bold; text-align: center; margin-bottom: 15px;"></p>
+                <button type="submit" class="btn-submit" id="submitBtn">Create My Account →</button>
+            </form>
+
+            <!-- Success -->
+            <div class="success-message" id="successMessage">
+                <div class="success-icon">✓</div>
+                <h2>Account Created!</h2>
+                <p>Welcome to DreamWorks HVAC. Your account is ready. Please do login first and head to your customer portal to explore services, track progress, and manage your projects.</p>
+                <a href="/customer/login" class="btn-portal">🏠 Go to Customer Login →</a>
+            </div>
+
+            <div class="auth-footer">
+                Already have an account? <a href="/customer/login">Sign In →</a> &nbsp;|&nbsp;
+                Need a quote? <a href="/quote">Get one free</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const passwordInput = document.getElementById('regPassword');
+        const strengthFill = document.getElementById('strengthFill');
+        const strengthText = document.getElementById('strengthText');
+        let passwordStrength = "";
+
+        function handlePasswordInput(){
+            
+            const pw = passwordInput.value;
+            let strength = 0;
+            if (pw.length >= 8) strength += 25;
+            if (pw.match(/[^A-Za-z0-9\s]+/)) strength += 25;
+            if (pw.match(/[A-Za-z]+/)) strength += 25;
+            if (pw.match(/[0-9]+/)) strength += 25;
+
+            strengthFill.style.width = strength + '%';
+
+            if (strength <= 25) {
+                passwordStrength = "Weak"
+                strengthFill.style.background = 'var(--error)';
+                strengthText.textContent = `Password strength: ${passwordStrength}`;
+                strengthText.style.color = 'var(--error)';
+            } else if (strength <= 50) {
+                passwordStrength = "Fair"
+                strengthFill.style.background = 'var(--warning)';
+                strengthText.textContent = `Password strength: ${passwordStrength}`;
+                strengthText.style.color = 'var(--warning)';
+            } else if (strength <= 75) {
+                passwordStrength = "Good"
+                strengthFill.style.background = '#3B82F6';
+                strengthText.textContent = `Password strength: ${passwordStrength}`;
+                strengthText.style.color = '#3B82F6';
+            } else {
+                passwordStrength = "Strong"
+                strengthFill.style.background = 'var(--success)';
+                strengthText.textContent = `Password strength: ${passwordStrength} ✓`;
+                strengthText.style.color = 'var(--success)';
+            }
+        }
+        
+
+        passwordInput.addEventListener('input', handlePasswordInput);
+
+        document.getElementById('registerForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const pw = fd.get('regPassword');
+            const pwc = fd.get('regPasswordConfirm');
+            const data = {}
+
+            for (const key of fd.keys()) {
+                data[key] = fd.get(key)
+            }
+            data.regTermsConditions = document.getElementById('termsCheck').checked
+            
+                const btn = document.getElementById('submitBtn');
+            btn.innerHTML = '<div class="spinner"></div> Creating Account...';
+            btn.disabled = true;
+
+            setTimeout( async() => {
+                try {
+                const res = await fetch('http://localhost:3000/registration/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+
+                
+                const response = await res.json()
+               
+                btn.disabled = false;
+                btn.innerHTML = 'Create My Account →'
+                if(!res.ok){
+                    if(response.url) window.location.href = response.url
+                    if(response.error){
+                        if(response.error === 'All fields are required!'){
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("errAllFields").textContent = response.error
+                            return;
+                        }
+                         if(response.error === 'Firstname is required!'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("fnameError").textContent = response.error
+                            return;
+                        }
+                         if(response.error === 'Firstname must be atleast 3 characters'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("fnameError").textContent = response.error
+                            return;
+                        }
+                        if(response.error === 'Firstname must be alphabetical letter only (e.g. Dr. John, Joe)'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("fnameError").textContent = response.error
+                            return;
+                        }
+                         if(response.error === 'Lastname is required!'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("lnameError").textContent = response.error
+                            return;
+                        }
+                         if(response.error === 'Lastname must be atleast 3 characters'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("lnameError").textContent = response.error
+                            return;
+                        }
+                        if(response.error === 'Lastname must be alphabetical letter only (e.g. Dr. John, Joe)'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("lnameError").textContent = response.error
+                            return;
+                        }
+                        if(response.error === 'Email is required!'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("emailError").textContent = response.error
+                            return;
+                        }
+                        if(response.error === 'Invalid Email!'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("emailError").textContent = response.error
+                            return;
+                        }
+                        if(response.error === 'Phone number is required!'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("phoneError").textContent = response.error
+                            return;
+                        }
+                        if(response.error === 'Invalid Phone Number! And spacing are not allowed'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("phoneError").textContent = response.error
+                            return;
+                        }
+                        if(response.error === 'Password is required!'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("pwdError").textContent = response.error
+                            return;
+                        }
+                        if(response.error === 'Please accept terms & conditions.'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("termsError").textContent = response.error
+                            return;
+                        }
+                        if(response.error === 'Password must be atleast 8 characters including uppercase, numbers, and symbols'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("pwdError").textContent = response.error
+                            passwordStrength = response.pwd_score
+                            handlePasswordInput()
+                            return;
+                        }
+                        if(response.error === 'Password Confirmation is required!'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = response.error
+                            return;
+                        }
+                        if(response.error === 'Passwords does not match!'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = response.error
+                            return;
+                        }
+                        if(response.error === 'Cannot create new account. Please try again.'  || response.error === 'Email is already exists!'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("regError").textContent = response.error
+                            return;
+                        }
+                    }
+                }
+                
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+
+                            passwordStrength = response.pwd_score
+                            handlePasswordInput()
+                const firstName = fd.get('regFirstName') || 'Customer';
+                sessionStorage.setItem('customerName', firstName);
+                e.target.style.display = 'none';
+                document.querySelector('.auth-footer').style.display = 'none';
+                document.getElementById('successMessage').classList.add('active');
+
+            } catch (error) {
+                alert(error.message)
+                window.location.href = '/error'
+            }
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

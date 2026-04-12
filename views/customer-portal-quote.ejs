@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get a Quote — DreamWorks HVAC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --primary: #0038FF;
+            --primary-dark: #0028CC;
+            --primary-light: #3D68FF;
+            --secondary: #00D4FF;
+            --dark: #0A0F1C;
+            --dark-blue: #1A1F35;
+            --gray: #64748B;
+            --light-gray: #E2E8F0;
+            --white: #FFFFFF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0038FF 0%, #0028CC 50%, #1A1F35 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(0,212,255,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(61,104,255,0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ---- Page Nav ---- */
+        .page-nav {
+            max-width: 1100px;
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .brand-logo {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
+
+        .brand-logo span { color: var(--secondary); }
+
+        .nav-links-row {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .nav-pill {
+            padding: 0.55rem 1.3rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1.5px solid rgba(255,255,255,0.3);
+            color: rgba(255,255,255,0.85);
+            background: rgba(255,255,255,0.08);
+            transition: all 0.25s;
+            cursor: pointer;
+        }
+
+        .nav-pill:hover {
+            background: rgba(255,255,255,0.18);
+            color: #fff;
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        .nav-pill.active {
+            background: #fff;
+            color: var(--primary);
+            border-color: #fff;
+        }
+
+        /* ---- Logo Block ---- */
+        .logo {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 0.8s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo h1 {
+            font-family: 'Barlow', sans-serif;
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        .logo span { color: var(--secondary); }
+
+        .logo p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1rem;
+            margin-top: 0.4rem;
+        }
+
+        /* ---- Main Card ---- */
+        .main-card {
+            background: var(--white);
+            border-radius: 28px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+            overflow: hidden;
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 0.8s ease 0.15s backwards;
+        }
+
+        /* ---- Card Header ---- */
+        .card-header {
+            background: linear-gradient(135deg, #f8faff, #eef2ff);
+            padding: 2.5rem 3rem 2rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .card-header h2 {
+            font-family: 'Barlow', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .card-header p { color: var(--gray); font-size: 1rem; }
+
+        /* ---- Progress Bar ---- */
+        .progress-container { padding: 2rem 3rem 0; }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px; left: 0; right: 0;
+            height: 3px;
+            background: var(--light-gray);
+            z-index: 0;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px; left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.4s ease;
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-number {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 3px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--gray);
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+        }
+
+        .step.active .step-number {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .step.completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: #fff;
+        }
+
+        .step.completed .step-number::before { content: '✓'; }
+
+        .step-label { font-size: 0.88rem; color: var(--gray); font-weight: 500; }
+        .step.active .step-label { color: var(--primary); font-weight: 600; }
+
+        /* ---- Form ---- */
+        .tab-content { padding: 2.5rem 3rem; }
+
+        .form-step { display: none; }
+        .form-step.active { display: block; animation: slideIn 0.4s ease; }
+
+        .form-section { margin-bottom: 2rem; }
+        .form-section h3 {
+            font-size: 1.2rem;
+            color: var(--dark);
+            margin-bottom: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.3rem;
+        }
+
+        .form-group { margin-bottom: 1.3rem; }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.45rem;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 0.92rem;
+        }
+
+        .required { color: var(--error); }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.85rem 1.1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.97rem;
+            transition: all 0.3s;
+            background: #fff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0,56,255,0.1);
+        }
+
+        .form-group textarea { resize: vertical; min-height: 110px; }
+
+        /* Service Cards */
+        .service-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .service-card-option { position: relative; }
+
+        .service-card-option input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .service-card-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.4rem 1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            background: #fff;
+        }
+
+        .service-card-option input:checked + label {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(0,56,255,0.05), rgba(0,212,255,0.05));
+            box-shadow: 0 5px 20px rgba(0,56,255,0.15);
+        }
+
+        .service-card-option label:hover { border-color: var(--primary-light); transform: translateY(-3px); }
+
+        .service-icon { font-size: 2.3rem; margin-bottom: 0.5rem; }
+        .service-name { font-weight: 700; color: var(--dark); font-size: 0.88rem; margin-bottom: 0.25rem; }
+        .service-desc { font-size: 0.78rem; color: var(--gray); }
+
+        /* Property Types */
+        .property-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .property-option { position: relative; }
+        .property-option input { position: absolute; opacity: 0; }
+
+        .property-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.4rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .property-option input:checked + label {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(0,56,255,0.05), rgba(0,212,255,0.05));
+        }
+
+        .property-icon { font-size: 2.8rem; margin-bottom: 0.5rem; }
+
+        /* Date Time */
+        .datetime-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.3rem; }
+
+        /* Nav Buttons */
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2.5rem;
+            padding-top: 1.8rem;
+            border-top: 2px solid var(--light-gray);
+        }
+
+        .btn {
+            padding: 0.9rem 2.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-back { background: var(--light-gray); color: var(--dark); }
+        .btn-back:hover { background: #CBD5E1; transform: translateX(-4px); }
+
+        .btn-next, .btn-submit {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            box-shadow: 0 5px 20px rgba(0,56,255,0.3);
+        }
+
+        .btn-next:hover, .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,56,255,0.4); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Success */
+        .success-message { display: none; text-align: center; padding: 3rem; }
+        .success-message.active { display: block; animation: fadeIn 0.5s ease; }
+
+        .success-icon {
+            width: 90px; height: 90px;
+            background: linear-gradient(135deg, var(--success), #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.8rem;
+            font-size: 2.8rem;
+            color: #fff;
+            animation: scaleIn 0.5s ease;
+        }
+
+        .success-message h2 { font-family: 'Barlow', sans-serif; font-size: 2.2rem; color: var(--dark); margin-bottom: 0.8rem; }
+        .success-message p { color: var(--gray); font-size: 1rem; margin-bottom: 1.5rem; }
+
+        .success-details {
+            background: var(--light-gray);
+            padding: 1.8rem;
+            border-radius: 14px;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .success-details h3 { color: var(--dark); margin-bottom: 0.8rem; font-size: 1rem; }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.45rem 0;
+            border-bottom: 1px solid #CBD5E1;
+            font-size: 0.9rem;
+        }
+
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { color: var(--gray); font-weight: 500; }
+        .detail-value { color: var(--dark); font-weight: 600; }
+
+        .success-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+
+        .btn-portal {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.9rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            box-shadow: 0 5px 20px rgba(0,56,255,0.3);
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-portal:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,56,255,0.4); }
+
+        .btn-secondary-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.9rem 2rem;
+            background: var(--light-gray);
+            color: var(--dark);
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary-link:hover { background: #CBD5E1; }
+
+        /* Spinner */
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 18px; height: 18px;
+            animation: spin 0.9s linear infinite;
+            display: inline-block;
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes scaleIn { from { transform: scale(0); } to { transform: scale(1); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .tab-content { padding: 1.8rem 1.5rem; }
+            .card-header { padding: 1.8rem 1.5rem 1.5rem; }
+            .progress-container { padding: 1.5rem 1.5rem 0; }
+            .datetime-grid { grid-template-columns: 1fr; }
+            .form-navigation { flex-direction: column-reverse; gap: 0.8rem; }
+            .btn { width: 100%; justify-content: center; }
+            .nav-links-row { gap: 0.4rem; }
+            .nav-pill { padding: 0.5rem 0.9rem; font-size: 0.8rem; }
+        }
+
+        /* ---- EULA Modal ---- */
+        .eula-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 15, 28, 0.75);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .eula-modal {
+            background: #fff;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 640px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+            animation: eulaSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+        }
+
+        @keyframes eulaSlideUp {
+            from { opacity: 0; transform: translateY(40px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0)   scale(1); }
+        }
+
+        .eula-header {
+            background: linear-gradient(135deg, #0038FF, #0028CC 60%, #1A1F35);
+            padding: 1.8rem 2rem 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .eula-header-top {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .eula-icon {
+            width: 48px; height: 48px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .eula-header h2 {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: -0.3px;
+            line-height: 1.1;
+        }
+
+        .eula-header h2 span { color: #00D4FF; }
+
+        .eula-header p {
+            color: rgba(255,255,255,0.72);
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+
+        .eula-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem 2rem;
+            scroll-behavior: smooth;
+        }
+
+        .eula-body::-webkit-scrollbar { width: 5px; }
+        .eula-body::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 99px; }
+
+        .eula-scroll-hint {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--gray);
+            background: #f8faff;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 0.5rem 0.9rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .eula-content {
+            font-size: 0.875rem;
+            color: var(--dark);
+            line-height: 1.7;
+        }
+
+        .eula-content h3 {
+            font-family: 'Barlow', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary);
+            margin: 1.4rem 0 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .eula-content h3:first-child { margin-top: 0; }
+
+        .eula-content p {
+            color: var(--gray);
+            margin-bottom: 0.75rem;
+        }
+
+        .eula-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 0.75rem;
+        }
+
+        .eula-content ul li {
+            color: var(--gray);
+            padding: 0.3rem 0 0.3rem 1.2rem;
+            position: relative;
+        }
+
+        .eula-content ul li::before {
+            content: '–';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .eula-placeholder {
+            background: repeating-linear-gradient(
+                0deg,
+                #f1f5f9,
+                #f1f5f9 10px,
+                #e2e8f0 10px,
+                #e2e8f0 11px
+            );
+            border-radius: 8px;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--gray);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px dashed #CBD5E1;
+            margin: 0.5rem 0 1rem;
+        }
+
+        .eula-placeholder span { font-size: 1.8rem; }
+
+        .eula-footer {
+            padding: 1.2rem 2rem 1.5rem;
+            border-top: 2px solid var(--light-gray);
+            flex-shrink: 0;
+            background: #fafcff;
+        }
+
+        .eula-agree-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            margin-bottom: 1.1rem;
+            cursor: pointer;
+        }
+
+        .eula-checkbox-wrap {
+            position: relative;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .eula-checkbox-wrap input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0; height: 0;
+        }
+
+        .eula-checkbox-custom {
+            width: 22px; height: 22px;
+            border: 2px solid var(--light-gray);
+            border-radius: 6px;
+            background: #fff;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .eula-checkbox-wrap input:checked ~ .eula-checkbox-custom {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .eula-checkbox-custom svg {
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .eula-checkbox-wrap input:checked ~ .eula-checkbox-custom svg {
+            opacity: 1;
+        }
+
+        .eula-agree-text {
+            font-size: 0.875rem;
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        .eula-agree-text strong { color: var(--primary); }
+
+        .eula-proceed-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            box-shadow: 0 5px 20px rgba(0,56,255,0.3);
+            opacity: 0.45;
+            pointer-events: none;
+        }
+
+        .eula-proceed-btn.enabled {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .eula-proceed-btn.enabled:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,56,255,0.4);
+        }
+
+        .eula-decline-link {
+            display: block;
+            text-align: center;
+            margin-top: 0.75rem;
+            font-size: 0.78rem;
+            color: var(--gray);
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+
+        .eula-decline-link:hover { color: var(--error); }
+
+        @media (max-width: 640px) {
+            .eula-modal { border-radius: 20px; }
+            .eula-header { padding: 1.4rem 1.4rem 1.2rem; }
+            .eula-body { padding: 1.2rem 1.4rem; }
+            .eula-footer { padding: 1rem 1.4rem 1.2rem; }
+        }
+        .upload-box {
+    position: relative; /* important */
+}
+/* uploadpart */
+/* Button style */
+.upload-action-btn {
+    position: center;
+    bottom: 12px;
+    right: 12px;
+
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    border: none;
+
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff;
+
+    box-shadow: 0 4px 15px rgba(0, 56, 255, 0.25);
+    cursor: pointer;
+
+    opacity: 0.5;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Enabled state */
+.upload-action-btn.enabled {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.upload-action-btn.enabled:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 56, 255, 0.35);
+}
+/* continue */
+.ctn-action-btn {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+
+    padding: 0.6rem 2.2rem;
+    border-radius: 50px;
+    border: none;
+
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: #fff;
+
+    box-shadow: 0 4px 15px rgba(0, 56, 255, 0.25);
+    cursor: pointer;
+
+    opacity: 0.5;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Enabled state */
+.ctn-action-btn.enabled {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.ctn-action-btn.enabled:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 56, 255, 0.35);
+}
+
+/* Upload Box */
+.upload-box {
+    border: 2px dashed var(--light-gray);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    background: linear-gradient(135deg, #f8faff, #eef2ff);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.upload-box:hover {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, rgba(0,56,255,0.05), rgba(0,212,255,0.05));
+    transform: translateY(-2px);
+}
+
+.upload-box.dragover {
+    border-color: var(--secondary);
+    background: rgba(0,212,255,0.08);
+}
+
+/* Content */
+.upload-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.upload-text {
+    font-size: 0.95rem;
+    color: var(--dark);
+    margin-bottom: 0.2rem;
+}
+
+.upload-subtext {
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+/* File Preview */
+.file-preview {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--primary);
+    font-weight: 600;
+}
+    </style>
+</head>
+<body>
+
+    <!-- ════════ EULA MODAL ════════ -->
+    <div class="eula-backdrop" id="eulaBackdrop">
+        <div class="eula-modal" role="dialog" aria-modal="true" aria-labelledby="eulaTitle">
+
+            <!-- Header -->
+            <div class="eula-header">
+                <div class="eula-header-top">
+                    <div class="eula-icon">📄</div>
+                    <div>
+                        <h2 id="eulaTitle">Terms &amp; <span>Agreement</span></h2>
+                        <p>DreamWorks HVAC Services — End User License Agreement</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scrollable body -->
+            <div class="eula-body" id="eulaBody">
+                <div class="eula-scroll-hint">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    Please read the full agreement before proceeding.
+                </div>
+
+                <div class="eula-content">
+
+                    <h3>&#x1F4CB; 1. Introduction</h3>
+                    <div class="eula-placeholder">
+                        <span>&#x1F4DD;</span>
+                        EULA Content — Section 1
+                        <small style="font-size:0.7rem;font-weight:400;text-transform:none;letter-spacing:0;">[Fill in your terms here]</small>
+                    </div>
+
+                    <h3>&#x1F512; 2. Privacy &amp; Data Collection</h3>
+                    <div class="eula-placeholder">
+                        <span>&#x1F512;</span>
+                        EULA Content — Section 2
+                        <small style="font-size:0.7rem;font-weight:400;text-transform:none;letter-spacing:0;">[Fill in your terms here]</small>
+                    </div>
+
+                    <h3>&#x1F4DE; 3. Service Terms</h3>
+                    <div class="eula-placeholder">
+                        <span>&#x1F6E0;&#xFE0F;</span>
+                        EULA Content — Section 3
+                        <small style="font-size:0.7rem;font-weight:400;text-transform:none;letter-spacing:0;">[Fill in your terms here]</small>
+                    </div>
+
+                    <h3>&#x2696;&#xFE0F; 4. Liability &amp; Disclaimers</h3>
+                    <div class="eula-placeholder">
+                        <span>&#x2696;&#xFE0F;</span>
+                        EULA Content — Section 4
+                        <small style="font-size:0.7rem;font-weight:400;text-transform:none;letter-spacing:0;">[Fill in your terms here]</small>
+                    </div>
+
+                    <h3>&#x2709;&#xFE0F; 5. Contact Information</h3>
+                    <div class="eula-placeholder">
+                        <span>&#x2709;&#xFE0F;</span>
+                        EULA Content — Section 5
+                        <small style="font-size:0.7rem;font-weight:400;text-transform:none;letter-spacing:0;">[Fill in your terms here]</small>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Footer: checkbox + button -->
+            <div class="eula-footer">
+                <label class="eula-agree-row" for="eulaCheckbox">
+                    <div class="eula-checkbox-wrap">
+                        <input type="checkbox" id="eulaCheckbox" onchange="toggleEulaBtn(this)">
+                        <div class="eula-checkbox-custom">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                    </div>
+                    <span class="eula-agree-text">
+                        I have read and agree to the <strong>DreamWorks HVAC End User License Agreement</strong>,
+                        including the terms of service, privacy policy, and data handling practices.
+                    </span>
+                </label>
+
+                <button class="eula-proceed-btn" id="eulaProceedBtn" onclick="acceptEula()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    I Agree — Get My Free Quote
+                </button>
+
+                <span class="eula-decline-link" onclick="declineEula()">Decline &amp; Leave</span>
+            </div>
+
+        </div>
+    </div>
+    <!-- ════════ END EULA ════════ -->
+
+    <!-- Page Navigation -->
+    <div class="page-nav">
+        <a href="dreamworks-hvac-updated.html" class="brand-logo">DREAM<span>WORKS</span></a>
+        <div class="nav-links-row">
+            <a href="quote(1).html" class="nav-pill active">📋 Get a Quote</a>
+            <a href="Progress.html" class="nav-pill">🏠 Customer Portal</a>
+        </div>
+    </div>
+
+    <!-- Logo -->
+    <div class="logo">
+        <h1>Request a Free <span>Quote</span></h1>
+        <p>Get an accurate estimate for your HVAC needs in just a few steps</p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="main-card">
+        <div class="card-header">
+            <h2>📋 Service Request Form</h2>
+            <p>Fill in the details below and our team will get back to you within 24 hours</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-steps">
+                <div class="progress-line" id="progressLine"></div>
+                <div class="step active" data-step="1"><div class="step-number">1</div><div class="step-label">Service</div></div>
+                <div class="step" data-step="2"><div class="step-number">2</div><div class="step-label">Property</div></div>
+                <div class="step" data-step="3"><div class="step-number">3</div><div class="step-label">Schedule</div></div>
+                <div class="step" data-step="4"><div class="step-number">4</div><div class="step-label">Contact</div></div>
+            </div>
+        </div>
+
+        <!-- Quote Form -->
+        <div class="tab-content">
+            <form id="quoteForm">
+
+                <!-- Step 1: Service -->
+                <div class="form-step active" data-step="1">
+                    <div class="form-section">
+                        <h3>🛠️ What service do you need?</h3>
+                        <div class="service-selection">
+                            <div class="service-card-option">
+                                <input type="checkbox" id="s1" name="service" value="ac-installation">
+                                <label for="s1"><div class="service-icon">❄️</div><div class="service-name">AC Installation</div><div class="service-desc">New unit setup</div></label>
+                            </div>
+                            <div class="service-card-option">
+                                <input type="checkbox" id="s2" name="service" value="ac-repair">
+                                <label for="s2"><div class="service-icon">🔧</div><div class="service-name">AC Repair</div><div class="service-desc">Fix issues</div></label>
+                            </div>
+                            <div class="service-card-option">
+                                <input type="checkbox" id="s3" name="service" value="maintenance">
+                                <label for="s3"><div class="service-icon">✅</div><div class="service-name">Maintenance</div><div class="service-desc">Regular checkup</div></label>
+                            </div>
+                            <div class="service-card-option">
+                                <input type="checkbox" id="s5" name="service" value="ductwork">
+                                <label for="s5"><div class="service-icon">🏗️</div><div class="service-name">Ductwork</div><div class="service-desc">Installation/repair</div></label>
+                            </div>
+                            <div class="service-card-option">
+                                <input type="checkbox" id="s6" name="service" value="emergency">
+                                <label for="s6"><div class="service-icon">🚨</div><div class="service-name">Emergency</div><div class="service-desc">Urgent repair</div></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3>📝 Additional details</h3>
+                        <div class="form-group">
+                            <label>Describe your needs</label>
+                            <textarea name="serviceDetails" placeholder="Describe your HVAC needs, issues, or any specific requirements..."></textarea>
+                        </div>
+                    </div>
+                    <!--upload -->
+                    <div>
+                    <h3> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000">
+                            <path d="m352-522 86-87-56-57-44 44-56-56 43-44-45-45-87 87 159 158Zm328 329 87-87-45-45-44 43-56-56 43-44-
+                            57-56-86 86 158 159Zm24-567 57 57-57-57ZM290-120H120v-170l175-175L80-680l200-200 216 216 151-152q12-12 27-18t31
+                            -6q16 0 31 6t27 18l53 54q12 12 18 27t6 31q0 16-6 30.5T816-647L665-495l215 215L680-80 465-295 290-120Zm-90-80h56l392-391
+                            -57-57-391 392v56Zm420-419-29-29 57 57-28-28Z"/></svg>Got your own design?</h3>
+                    <div class="upload-box" id="uploadBox">
+                        
+    <input type="file" id="fileInput" hidden>
+
+    <div class="upload-content">
+        <div class="upload-icon">📁</div>
+        <p class="upload-text">
+            <strong>Click to upload</strong> or drag and drop
+        </p>
+        <span class="upload-subtext">PNG, JPG, PDF (Max 5MB)</span>
+        </div>
+    <div class="file-preview" id="filePreview"></div>
+
+    <!-- NEW BUTTON -->
+    <button class="upload-action-btn" id="uploadBtn" disabled>
+        Upload
+    </button>
+     <a href="register.html" class="ctn-action-btn" disabled> Continue→</a>
+</div>
+    </div>
+                </div>
+
+                <!-- Step 2: Property -->
+                <div class="form-step" data-step="2">
+                    <div class="form-section">
+                        <h3>🏠 Property Type</h3>
+                        <div class="property-types">
+                            <div class="property-option">
+                                <input type="radio" id="p1" name="propertyType" value="residential" required>
+                                <label for="p1"><div class="property-icon">🏠</div><div class="service-name">Residential</div></label>
+                            </div>
+                            <div class="property-option">
+                                <input type="radio" id="p2" name="propertyType" value="commercial">
+                                <label for="p2"><div class="property-icon">🏢</div><div class="service-name">Commercial</div></label>
+                            </div>
+                            <div class="property-option">
+                                <input type="radio" id="p3" name="propertyType" value="industrial">
+                                <label for="p3"><div class="property-icon">🏭</div><div class="service-name">Industrial</div></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3>📍 Location</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Street Address <span class="required">*</span></label>
+                                <input type="text" name="address" placeholder="123 Main Street" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Barangay <span class="required">*</span></label>
+                                <input type="text" name="barangay" placeholder="Sta. Lucia" required>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>City <span class="required">*</span></label>
+                                <input type="text" name="city" placeholder="Pasig City" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Postal Code</label>
+                                <input type="text" name="postal" placeholder="1600">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Schedule -->
+                <div class="form-step" data-step="3">
+                    <div class="form-section">
+                        <h3>📅 Preferred Schedule</h3>
+                        <div class="datetime-grid">
+                            <div class="form-group">
+                                <label>Preferred Date <span class="required">*</span></label>
+                                <input type="date" name="preferredDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Preferred Time <span class="required">*</span></label>
+                                <select name="preferredTime" required>
+                                    <option value="">Select time</option>
+                                    <option>8:00 AM - 10:00 AM</option>
+                                    <option>10:00 AM - 12:00 PM</option>
+                                    <option>12:00 PM - 2:00 PM</option>
+                                    <option>2:00 PM - 4:00 PM</option>
+                                    <option>4:00 PM - 6:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3>⚡ Urgency Level</h3>
+                        <div class="form-group">
+                            <select name="urgency" required>
+                                <option value="">Select urgency</option>
+                                <option value="emergency">🚨 Emergency – Within 24 hours</option>
+                                <option value="urgent">⚡ Urgent – Within 3 days</option>
+                                <option value="standard">📅 Standard – Within 1 week</option>
+                                <option value="flexible">🗓️ Flexible – No rush</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Contact -->
+                <div class="form-step" data-step="4">
+                    <div class="form-section">
+                        <h3>👤 Your Contact Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>First Name <span class="required">*</span></label>
+                                <input type="text" name="firstName" placeholder="Juan" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name <span class="required">*</span></label>
+                                <input type="text" name="lastName" placeholder="Dela Cruz" required>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Email Address <span class="required">*</span></label>
+                                <input type="email" name="email" placeholder="juan@email.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number <span class="required">*</span></label>
+                                <input type="tel" name="phone" placeholder="+63 9XX XXX XXXX" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>How did you hear about us?</label>
+                            <select name="referral">
+                                <option value="">Select option</option>
+                                <option>Facebook</option>
+                                <option>Google Search</option>
+                                <option>Referral / Friend</option>
+                                <option>Signage / Flyer</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-back" id="prevBtn" style="display:none;">← Back</button>
+                    <button type="button" class="btn btn-next" id="nextBtn">Next →</button>
+                    <button type="submit" class="btn btn-submit" id="submitBtn" style="display:none;">Submit Request ✓</button>
+                </div>
+            </form>
+
+            <!-- Success -->
+            <div class="success-message" id="successMessage">
+                <div class="success-icon">✓</div>
+                <h2>Quote Request Submitted!</h2>
+                <p>Thank you! Our team will review your request and contact you within 24 hours with a detailed estimate.</p>
+                <div class="success-details">
+                    <h3>Request Summary</h3>
+                    <div id="quoteSummary"></div>
+                </div>
+                <div class="success-actions">
+                    <a href="dreamworks-hvac-updated.html" class="btn-portal">Back to Homepage Portal →</a>
+                    <a href="register.html" class="btn-secondary-link">👤 Create an Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const successMessage = document.getElementById('successMessage');
+        const quoteForm = document.getElementById('quoteForm');
+
+        function updateProgress() {
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+            document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.add('active');
+
+            document.querySelectorAll('.step').forEach((s, i) => {
+                s.classList.remove('active', 'completed');
+                if (i + 1 < currentStep) s.classList.add('completed');
+                else if (i + 1 === currentStep) s.classList.add('active');
+            });
+
+            const pct = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('progressLine').style.width = pct + '%';
+
+            prevBtn.style.display = currentStep === 1 ? 'none' : 'inline-flex';
+            nextBtn.style.display = currentStep === totalSteps ? 'none' : 'inline-flex';
+            submitBtn.style.display = currentStep === totalSteps ? 'inline-flex' : 'none';
+        }
+
+        function validateStep(step) {
+            const fs = document.querySelector(`.form-step[data-step="${step}"]`);
+            if (step === 1) {
+                if (!fs.querySelectorAll('input[name="service"]:checked').length) {
+                    alert('Please select at least one service'); return false;
+                }
+            }
+            const required = fs.querySelectorAll('[required]');
+            let ok = true;
+            required.forEach(input => {
+                if (!input.value.trim() && input.type !== 'checkbox' && input.type !== 'radio') {
+                    input.style.borderColor = 'var(--error)'; ok = false;
+                } else if (input.type === 'radio') {
+                    if (!fs.querySelector(`input[name="${input.name}"]:checked`)) ok = false;
+                } else {
+                    input.style.borderColor = 'var(--light-gray)';
+                }
+            });
+            if (!ok) alert('Please fill in all required fields');
+            return ok;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (validateStep(currentStep)) { currentStep++; updateProgress(); window.scrollTo({top:0,behavior:'smooth'}); }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            currentStep--; updateProgress(); window.scrollTo({top:0,behavior:'smooth'});
+        });
+
+        quoteForm.addEventListener('submit', e => {
+            e.preventDefault();
+            if (!validateStep(currentStep)) return;
+
+            const fd = new FormData(quoteForm);
+            const services = fd.getAll('service');
+            const data = {};
+            for (let [k, v] of fd.entries()) { if (k !== 'service') data[k] = v; }
+
+            submitBtn.innerHTML = '<div class="spinner"></div> Processing...';
+            submitBtn.disabled = true;
+
+            setTimeout(() => {
+                quoteForm.style.display = 'none';
+                document.querySelector('.progress-container').style.display = 'none';
+                successMessage.classList.add('active');
+
+                document.getElementById('quoteSummary').innerHTML = `
+                    <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${data.firstName} ${data.lastName}</span></div>
+                    <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${data.email}</span></div>
+                    <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${data.phone}</span></div>
+                    <div class="detail-row"><span class="detail-label">Services</span><span class="detail-value">${services.join(', ').replace(/-/g, ' ')}</span></div>
+                    <div class="detail-row"><span class="detail-label">Location</span><span class="detail-value">${data.address}, ${data.city}</span></div>
+                    <div class="detail-row"><span class="detail-label">Date & Time</span><span class="detail-value">${data.preferredDate} · ${data.preferredTime}</span></div>
+                    <div class="detail-row"><span class="detail-label">Urgency</span><span class="detail-value">${data.urgency}</span></div>
+                `;
+                submitBtn.innerHTML = 'Submit Request ✓';
+                submitBtn.disabled = false;
+            }, 1500);
+        });
+
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('input[type="date"]').forEach(i => i.setAttribute('min', today));
+
+        document.querySelectorAll('input, select, textarea').forEach(i => {
+            i.addEventListener('input', () => i.style.borderColor = 'var(--light-gray)');
+        });
+
+        updateProgress();
+
+        // ── EULA Functions ──
+        function toggleEulaBtn(checkbox) {
+            const btn = document.getElementById('eulaProceedBtn');
+            btn.classList.toggle('enabled', checkbox.checked);
+        }
+
+        function acceptEula() {
+            const backdrop = document.getElementById('eulaBackdrop');
+            if (!document.getElementById('eulaFadeOutStyle')) {
+                const s = document.createElement('style');
+                s.id = 'eulaFadeOutStyle';
+                s.textContent = '@keyframes fadeOut { from{opacity:1}to{opacity:0} }';
+                document.head.appendChild(s);
+            }
+            backdrop.style.animation = 'fadeOut 0.3s ease forwards';
+            setTimeout(() => { backdrop.style.display = 'none'; }, 300);
+        }
+
+        function declineEula() {
+            if (confirm('Are you sure you want to decline? You will be redirected away from this page.')) {
+                window.location.href = 'dreamworks-hvac-updated.html';
+            }
+        }
+
+        // Clicking the backdrop shakes the modal instead of closing
+        document.getElementById('eulaBackdrop').addEventListener('click', function(e) {
+            if (e.target !== this) return;
+            const modal = this.querySelector('.eula-modal');
+            if (!document.getElementById('eulaShakeStyle')) {
+                const s = document.createElement('style');
+                s.id = 'eulaShakeStyle';
+                s.textContent = '@keyframes eulaShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}';
+                document.head.appendChild(s);
+            }
+            modal.style.animation = 'none';
+            void modal.offsetWidth; // reflow
+            modal.style.animation = 'eulaShake 0.4s ease';
+        });
+    </script>
+    <script>
+const uploadBox = document.getElementById("uploadBox");
+const fileInput = document.getElementById("fileInput");
+const filePreview = document.getElementById("filePreview");
+const uploadBtn = document.getElementById("uploadBtn");
+
+// Enable button function
+function enableButton() {
+    uploadBtn.disabled = false;
+    uploadBtn.classList.add("enabled");
+}
+
+// Click to open file
+uploadBox.addEventListener("click", () => fileInput.click());
+
+// File selected
+fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    if (file) {
+        filePreview.textContent = "📄 " + file.name;
+        enableButton();
+    }
+});
+
+// Drag events
+uploadBox.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    uploadBox.classList.add("dragover");
+});
+
+uploadBox.addEventListener("dragleave", () => {
+    uploadBox.classList.remove("dragover");
+});
+
+uploadBox.addEventListener("drop", (e) => {
+    e.preventDefault();
+    uploadBox.classList.remove("dragover");
+
+    const file = e.dataTransfer.files[0];
+    fileInput.files = e.dataTransfer.files;
+
+    if (file) {
+        filePreview.textContent = "📄 " + file.name;
+        enableButton();
+    }
+});
+</script>
+</body>
+</html>

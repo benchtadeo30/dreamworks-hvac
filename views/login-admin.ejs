@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login — DreamWorks HVAC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary:      #0038FF;
+            --primary-dark: #0028CC;
+            --secondary:    #00D4FF;
+            --dark:         #0A0F1C;
+            --dark-blue:    #1A1F35;
+            --gray:         #64748B;
+            --light-gray:   #E2E8F0;
+            --white:        #FFFFFF;
+            --success:      #10B981;
+            --error:        #EF4444;
+            --admin-gold:   #F59E0B;
+            --admin-gold-dark: #D97706;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(160deg, #0A0F1C 0%, #0D1533 45%, #091040 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Layered background glows */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 70% 50% at 15% 20%, rgba(0,56,255,0.22) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 85% 75%, rgba(0,212,255,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 30% at 50% 50%, rgba(245,158,11,0.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        /* Animated grid lines */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,56,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,56,255,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.18;
+            animation: orbDrift linear infinite;
+            pointer-events: none;
+        }
+        .orb-1 { width: 300px; height: 300px; background: var(--primary); top: -100px; left: -50px; animation-duration: 25s; animation-delay: 0s; }
+        .orb-2 { width: 200px; height: 200px; background: var(--secondary); bottom: -80px; right: 10%; animation-duration: 30s; animation-delay: -10s; }
+        .orb-3 { width: 150px; height: 150px; background: var(--admin-gold); top: 40%; left: 75%; animation-duration: 20s; animation-delay: -5s; }
+
+        @keyframes orbDrift {
+            0%   { transform: translate(0, 0) scale(1); }
+            33%  { transform: translate(40px, -30px) scale(1.1); }
+            66%  { transform: translate(-20px, 20px) scale(0.95); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* Nav */
+        .page-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 1.1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .brand-logo {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+        .brand-logo span { color: var(--secondary); }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-badge-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(245,158,11,0.15);
+            border: 1px solid rgba(245,158,11,0.3);
+            color: var(--admin-gold);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .nav-back {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            color: rgba(255,255,255,0.55);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-back:hover { color: rgba(255,255,255,0.9); }
+
+        /* Main wrapper */
+        .login-wrapper {
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+            z-index: 2;
+            animation: slideUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+            margin-top: 5rem;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header text */
+        .login-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(245,158,11,0.12);
+            border: 1px solid rgba(245,158,11,0.25);
+            color: var(--admin-gold);
+            padding: 0.38rem 1rem;
+            border-radius: 50px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 1.2rem;
+        }
+
+        .login-heading {
+            font-family: 'Barlow', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.0;
+            letter-spacing: -1.5px;
+            margin-bottom: 0.5rem;
+        }
+        .login-heading .accent { color: var(--admin-gold); }
+        .login-heading .accent-blue { color: var(--secondary); }
+
+        .login-subheading {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.93rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Card */
+        .login-card {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(24px);
+            border-radius: 24px;
+            padding: 2.2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow:
+                0 30px 80px rgba(0,0,0,0.5),
+                0 0 0 1px rgba(245,158,11,0.06),
+                inset 0 1px 0 rgba(255,255,255,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Gold top accent line */
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 10%; right: 10%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--admin-gold), transparent);
+            border-radius: 0 0 2px 2px;
+        }
+
+        /* Security level indicator */
+        .security-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 1rem;
+            background: rgba(245,158,11,0.08);
+            border: 1px solid rgba(245,158,11,0.15);
+            border-radius: 10px;
+            margin-bottom: 1.6rem;
+        }
+
+        .security-icon {
+            font-size: 1rem;
+            width: 28px;
+            height: 28px;
+            background: rgba(245,158,11,0.15);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .security-text {
+            flex: 1;
+        }
+
+        .security-title {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--admin-gold);
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+
+        .security-sub {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .security-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .security-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--admin-gold);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        .security-dot:nth-child(2) { animation-delay: 0.25s; background: var(--secondary); }
+        .security-dot:nth-child(3) { animation-delay: 0.5s; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        /* Error */
+        .error-msg {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: #FCA5A5;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .error-msg.show { display: block; animation: shakeX 0.4s ease; }
+
+        @keyframes shakeX {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* Form */
+        .form-group { margin-bottom: 1.1rem; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.65);
+            margin-bottom: 0.45rem;
+            letter-spacing: 0.3px;
+        }
+
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 0.9rem;
+            font-size: 1rem;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.7;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 2.6rem;
+            background: rgba(255,255,255,0.06);
+            border: 1.5px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.25s;
+            outline: none;
+        }
+
+        .input-wrap input::placeholder { color: rgba(255,255,255,0.3); }
+
+        .input-wrap input:focus {
+            border-color: var(--admin-gold);
+            background: rgba(245,158,11,0.06);
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 0.9rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            opacity: 0.5;
+            padding: 0.2rem;
+            transition: opacity 0.2s;
+        }
+        .password-toggle:hover { opacity: 1; }
+
+        /* Admin ID row */
+        .form-row-between {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.4rem;
+        }
+
+        .remember-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.83rem;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+
+        .remember-label input[type="checkbox"] {
+            accent-color: var(--admin-gold);
+            width: 14px;
+            height: 14px;
+        }
+
+        .forgot-link {
+            font-size: 0.83rem;
+            color: rgba(255,255,255,0.45);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .forgot-link:hover { color: var(--admin-gold); }
+
+        /* Submit */
+        .btn-submit {
+            width: 100%;
+            padding: 0.95rem;
+            background: linear-gradient(135deg, var(--admin-gold) 0%, var(--admin-gold-dark) 100%);
+            color: #0A0F1C;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.28s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 6px 24px rgba(245,158,11,0.3);
+            letter-spacing: 0.2px;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(245,158,11,0.45);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            width: 18px; height: 18px;
+            border: 2.5px solid rgba(10,15,28,0.3);
+            border-top-color: #0A0F1C;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Divider */
+        .card-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.07);
+            margin: 1.4rem 0;
+        }
+
+        /* Footer */
+        .card-footer {
+            text-align: center;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.3);
+            line-height: 1.8;
+        }
+
+        .card-footer a {
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .card-footer a:hover { color: var(--admin-gold); }
+
+        /* Success panel */
+        .success-panel {
+            display: none;
+            text-align: center;
+            padding: 1rem 0;
+            animation: fadeIn 0.5s ease;
+        }
+        .success-panel.show { display: block; }
+
+        .success-icon-wrap {
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, var(--admin-gold), var(--admin-gold-dark));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            box-shadow: 0 12px 40px rgba(245,158,11,0.4);
+            animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+        }
+
+        @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .success-panel h3 {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .success-panel p {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .btn-portal {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.9rem 2.2rem;
+            background: linear-gradient(135deg, var(--admin-gold), var(--admin-gold-dark));
+            color: #0A0F1C;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            box-shadow: 0 6px 24px rgba(245,158,11,0.35);
+            transition: all 0.3s;
+        }
+        .btn-portal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 36px rgba(245,158,11,0.5);
+        }
+
+        /* 2FA section */
+        .twofa-section {
+            display: none;
+            animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .twofa-section.show { display: block; }
+
+        .twofa-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .twofa-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .twofa-title {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+
+        .twofa-sub {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.45);
+        }
+
+        .otp-row {
+            display: flex;
+            gap: 0.6rem;
+            justify-content: center;
+            margin-bottom: 1.4rem;
+        }
+
+        .otp-input {
+            width: 52px;
+            height: 56px;
+            text-align: center;
+            font-family: 'Barlow', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: rgba(255,255,255,0.06);
+            border: 1.5px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            color: #fff;
+            outline: none;
+            transition: all 0.2s;
+            caret-color: var(--admin-gold);
+        }
+
+        .otp-input:focus {
+            border-color: var(--admin-gold);
+            background: rgba(245,158,11,0.08);
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.12);
+        }
+
+        .otp-input.filled {
+            border-color: rgba(245,158,11,0.5);
+            background: rgba(245,158,11,0.06);
+        }
+
+        .twofa-resend {
+            text-align: center;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.35);
+            margin-top: 0.5rem;
+        }
+
+        .twofa-resend a {
+            color: var(--admin-gold);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-to-login {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.4);
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.82rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            width: 100%;
+            transition: color 0.2s;
+        }
+        .back-to-login:hover { color: rgba(255,255,255,0.7); }
+
+        @media (max-width: 520px) {
+            body { padding: 1rem; }
+            .login-card { padding: 1.6rem; }
+            .login-heading { font-size: 2.4rem; }
+            .otp-input { width: 42px; height: 48px; font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- Nav -->
+    <nav class="page-nav">
+        <a href="/" class="brand-logo">DREAM<span>WORKS</span></a>
+        <div class="nav-right">
+            <div class="admin-badge-nav">🛡️ Admin Portal</div>
+            <a href="/" class="nav-back">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                Back
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <div class="login-wrapper">
+        <div class="login-eyebrow">🛡️ Secure Access — Admin Only</div>
+        <h1 class="login-heading">Admin<br><span class="accent">Control</span> <span class="accent-blue">Panel</span></h1>
+        <p class="login-subheading">Authorized personnel only. All sessions are monitored and logged.</p>
+
+        <div class="login-card">
+
+            <!-- Login Form -->
+            <div id="loginSection">
+                <!-- Security indicator -->
+                <div class="security-bar">
+                    <div class="security-icon">🔒</div>
+                    <div class="security-text">
+                        <div class="security-title">Encrypted Connection</div>
+                        <div class="security-sub">256-bit SSL · Session monitored</div>
+                    </div>
+                    <div class="security-dots">
+                        <div class="security-dot"></div>
+                        <div class="security-dot"></div>
+                        <div class="security-dot"></div>
+                    </div>
+                </div>
+
+                <div class="error-msg" id="errorMsg">⚠️ Invalid credentials. Please try again.</div>
+
+                <div class="form-group">
+                    <label>Admin Email</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">✉️</span>
+                        <input type="email" id="adminEmail" placeholder="admin@dreamworkshvac.com" autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">🔑</span>
+                        <input type="password" id="adminPassword" placeholder="Enter admin password" autocomplete="current-password">
+                        <button class="password-toggle" type="button" onclick="togglePw('adminPassword', this)">👁️</button>
+                    </div>
+                </div>
+
+                <div class="form-row-between">
+                    <label class="remember-label">
+                        <input type="checkbox" id="rememberMe"> Remember this device
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button class="btn-submit" id="submitBtn" onclick="handleLogin()">
+                    🛡️ &nbsp;Sign In to Admin Panel
+                </button>
+
+                <div class="card-divider"></div>
+
+                <div class="card-footer">
+                    Not an admin? &nbsp;
+                    <a href="/customer/login">Customer login</a>
+                    &nbsp;·&nbsp;
+                    <a href="employee/login">Technician login</a>
+                    <br>
+                    <a href="/">← Return to main site</a>
+                </div>
+            </div>
+
+            <!-- 2FA Section -->
+            <div class="twofa-section" id="twoFaSection">
+                <div class="twofa-header">
+                    <div class="twofa-icon">📱</div>
+                    <div class="twofa-title">Verify Identity</div>
+                    <div class="twofa-sub">Enter the 6-digit code sent to your registered device</div>
+                </div>
+
+                <div class="error-msg" id="otpErrorMsg">⚠️ Invalid code. Please try again.</div>
+
+                <div class="otp-row" id="otpRow">
+                    <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                    <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                    <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                    <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                    <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                    <input class="otp-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]">
+                </div>
+
+                <button class="btn-submit" id="otpSubmitBtn" onclick="handleOtp()">
+                    ✅ &nbsp;Verify & Enter
+                </button>
+
+                <div class="twofa-resend">
+                    Didn't receive it? <a href="#" onclick="resendCode(event)">Resend code</a>
+                </div>
+
+                <button class="back-to-login" onclick="goBackToLogin()">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                    Back to login
+                </button>
+            </div>
+
+            <!-- Success Panel -->
+            <div class="success-panel" id="successPanel">
+                <div class="success-icon-wrap">🛡️</div>
+                <h3>Access Granted</h3>
+                <p>Welcome, Administrator. Redirecting to your control panel…</p>
+                <a href="/admin" class="btn-portal">🚀 &nbsp;Go to Admin Portal →</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ── Password toggle ──html
+        function togglePw(id, btn) {
+            const input = document.getElementById(id);
+            if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+            else { input.type = 'password'; btn.textContent = '👁️'; }
+        }
+
+        // ── Show error ──
+        function showError(msg, elId = 'errorMsg') {
+            const err = document.getElementById(elId);
+            err.textContent = '⚠️ ' + msg;
+            err.classList.add('show');
+            setTimeout(() => err.classList.remove('show'), 4500);
+        }
+
+        // ── Step 1: Login ──
+        function handleLogin() {
+            const email = document.getElementById('adminEmail').value.trim();
+            const pass  = document.getElementById('adminPassword').value;
+            const btn   = document.getElementById('submitBtn');
+
+            document.getElementById('errorMsg').classList.remove('show');
+
+            if (!email) { showError('Please enter your admin email.'); return; }
+            if (!pass)  { showError('Please enter your password.'); return; }
+            if (!email.includes('@')) { showError('Please enter a valid email address.'); return; }
+
+            btn.innerHTML = '<div class="spinner"></div> &nbsp;Verifying…';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = '🛡️ &nbsp;Sign In to Admin Panel';
+                btn.disabled = false;
+                // Show 2FA
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('twoFaSection').classList.add('show');
+                document.querySelector('.otp-input').focus();
+            }, 1400);
+        }
+
+        // ── Step 2: OTP ──
+        function handleOtp() {
+            const inputs = document.querySelectorAll('.otp-input');
+            const code = Array.from(inputs).map(i => i.value).join('');
+            const btn = document.getElementById('otpSubmitBtn');
+
+            if (code.length < 6) { showError('Please enter all 6 digits.', 'otpErrorMsg'); return; }
+
+            btn.innerHTML = '<div class="spinner"></div> &nbsp;Verifying…';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                btn.innerHTML = '✅ &nbsp;Verify & Enter';
+                btn.disabled = false;
+                document.getElementById('twoFaSection').classList.remove('show');
+                document.getElementById('twoFaSection').style.display = 'none';
+                document.getElementById('successPanel').classList.add('show');
+                setTimeout(() => { window.location.href = '/admin'; }, 2800);
+            }, 1500);
+        }
+
+        // ── Back to login ──
+        function goBackToLogin() {
+            document.getElementById('twoFaSection').classList.remove('show');
+            document.getElementById('twoFaSection').style.display = 'none';
+            document.getElementById('loginSection').style.display = 'block';
+            document.querySelectorAll('.otp-input').forEach(i => { i.value = ''; i.classList.remove('filled'); });
+        }
+
+        // ── Resend code ──
+        function resendCode(e) {
+            e.preventDefault();
+            const link = e.target;
+            link.textContent = 'Sent!';
+            link.style.color = '#10B981';
+            setTimeout(() => {
+                link.textContent = 'Resend code';
+                link.style.color = '';
+            }, 3000);
+        }
+
+        // ── OTP auto-advance ──
+        document.querySelectorAll('.otp-input').forEach((input, idx, all) => {
+            input.addEventListener('input', (e) => {
+                const val = e.target.value.replace(/\D/g, '');
+                e.target.value = val;
+                if (val) {
+                    e.target.classList.add('filled');
+                    if (idx < all.length - 1) all[idx + 1].focus();
+                    else handleOtp();
+                } else {
+                    e.target.classList.remove('filled');
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !input.value && idx > 0) {
+                    all[idx - 1].focus();
+                    all[idx - 1].value = '';
+                    all[idx - 1].classList.remove('filled');
+                }
+            });
+
+            input.addEventListener('paste', (e) => {
+                const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+                e.preventDefault();
+                paste.split('').forEach((ch, i) => {
+                    if (all[i]) { all[i].value = ch; all[i].classList.add('filled'); }
+                });
+                if (paste.length === 6) handleOtp();
+                else if (all[paste.length]) all[paste.length].focus();
+            });
+        });
+
+        // ── Enter key ──
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                if (document.getElementById('loginSection').style.display !== 'none') handleLogin();
+            }
+        });
+    </script>
+</body>
+</html>

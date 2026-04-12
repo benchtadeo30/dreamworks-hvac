@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Portal — DreamWorks HVAC</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --primary: #0038FF;
+            --primary-dark: #0028CC;
+            --primary-light: #3D68FF;
+            --secondary: #00D4FF;
+            --dark: #0A0F1C;
+            --dark-blue: #1A1F35;
+            --gray: #64748B;
+            --light-gray: #E2E8F0;
+            --white: #FFFFFF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --bg: #F0F4FF;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        /* ============ TOP BAR ============ */
+        .portal-topbar {
+            background: linear-gradient(135deg, #0038FF 0%, #0028CC 55%, #1A1F35 100%);
+            padding: 0 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 68px;
+            box-shadow: 0 4px 24px rgba(0,56,255,0.25);
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+        }
+
+        .brand {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .brand span { color: var(--secondary); }
+
+        /* Top-bar nav links */
+        .topbar-nav {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .topbar-link {
+            padding: 0.45rem 1.1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: rgba(255,255,255,0.8);
+            border: 1.5px solid transparent;
+            transition: all 0.25s;
+        }
+
+        .topbar-link:hover {
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+        }
+
+        .topbar-link.outbound {
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .greeting-text {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .greeting-text strong { color: #fff; }
+
+        .topbar-btn {
+            padding: 0.48rem 1.2rem;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-decoration: none;
+            border: 1.5px solid rgba(255,255,255,0.35);
+            color: rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .topbar-btn:hover { background: rgba(255,255,255,0.22); color: #fff; }
+
+        /* ============ PORTAL NAV TABS ============ */
+        .portal-nav {
+            background: #fff;
+            border-bottom: 2px solid var(--light-gray);
+            padding: 0 2.5rem;
+            display: flex;
+            box-shadow: 0 2px 12px rgba(0,56,255,0.06);
+            position: sticky;
+            top: 68px;
+            z-index: 100;
+        }
+
+        .portal-tab {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 1rem 1.8rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.25s;
+            white-space: nowrap;
+        }
+
+        .portal-tab:hover { color: var(--primary); }
+        .portal-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        .tab-badge {
+            background: var(--success);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 20px;
+        }
+
+        /* ============ PORTAL BODY ============ */
+        .portal-body {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 2rem 2rem 4rem;
+        }
+
+        /* Panel visibility */
+        .portal-panel { display: none; animation: fadeIn 0.35s ease; }
+        .portal-panel.active { display: block; }
+
+        /* ============ PANEL 1: DASHBOARD ============ */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 1.8rem;
+            align-items: start;
+        }
+
+        .dashboard-left { display: flex; flex-direction: column; gap: 1.8rem; }
+
+        /* Quick actions */
+        .quick-bar {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.2rem;
+        }
+
+        .qbtn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.4rem;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-decoration: none;
+            border: none;
+        }
+
+        .qbtn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(0,56,255,0.28);
+        }
+
+        .qbtn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,56,255,0.38); }
+
+        .qbtn-ghost {
+            background: #fff;
+            color: var(--primary);
+            border: 1.5px solid #D6E0FF;
+            box-shadow: 0 2px 8px rgba(0,56,255,0.07);
+        }
+
+        .qbtn-ghost:hover { background: var(--primary); color: #fff; border-color: var(--primary); transform: translateY(-2px); }
+
+        /* Portal card */
+        .portal-card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 1.8rem;
+            box-shadow: 0 4px 22px rgba(0,56,255,0.07);
+            border: 1.5px solid var(--light-gray);
+        }
+
+        .section-title {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Services grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .service-tile {
+            background: linear-gradient(135deg, #F6F9FF, #EDF1FF);
+            border: 1.5px solid #D6E0FF;
+            border-radius: 13px;
+            padding: 1.3rem 0.9rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.28s;
+        }
+
+        .service-tile:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 28px rgba(0,56,255,0.14);
+            transform: translateY(-4px);
+            background: linear-gradient(135deg, #EDF1FF, #DDE6FF);
+        }
+
+        .tile-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .tile-name { font-weight: 700; font-size: 0.85rem; color: var(--dark); margin-bottom: 0.25rem; }
+        .tile-desc { font-size: 0.75rem; color: var(--gray); line-height: 1.4; }
+
+        .tile-cta {
+            display: inline-block;
+            margin-top: 0.65rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        /* Docs grid */
+        .docs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+
+        .doc-card {
+            border-radius: 13px;
+            overflow: hidden;
+            border: 1.5px solid var(--light-gray);
+            background: #fff;
+            transition: all 0.28s;
+        }
+
+        .doc-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,56,255,0.12); border-color: var(--primary); }
+
+        .doc-img {
+            width: 100%;
+            height: 145px;
+            background: linear-gradient(135deg, #E4ECFF, #D6E4FF);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            border-bottom: 1.5px solid var(--light-gray);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doc-img::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent, transparent 10px,
+                rgba(0,56,255,0.04) 10px, rgba(0,56,255,0.04) 20px
+            );
+        }
+
+        .doc-img-icon { font-size: 2.2rem; position: relative; z-index: 1; }
+        .doc-img-text { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: #82A4D8; position: relative; z-index: 1; }
+
+        .doc-info { padding: 0.8rem 0.9rem; }
+        .doc-title { font-weight: 700; font-size: 0.85rem; color: var(--dark); margin-bottom: 0.3rem; }
+        .doc-meta { font-size: 0.75rem; color: var(--gray); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+
+        .status-pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .status-pill.done { background: #DCFCE7; color: #16A34A; }
+        .status-pill.ongoing { background: #FEF3C7; color: #D97706; }
+
+        /* ============ TAGLINE SIDEBAR ============ */
+        .dashboard-right { position: sticky; top: 148px; }
+
+        .tagline-card {
+            background: linear-gradient(160deg, #0038FF 0%, #0028CC 50%, #1A1F35 100%);
+            border-radius: 18px;
+            padding: 1.8rem 1.6rem;
+            color: #fff;
+            box-shadow: 0 12px 40px rgba(0,56,255,0.3);
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tagline-card::before {
+            content: '';
+            position: absolute;
+            top: -30px; right: -30px;
+            width: 150px; height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,212,255,0.22), transparent 70%);
+            pointer-events: none;
+        }
+
+        .tagline-card::after {
+            content: '';
+            position: absolute;
+            bottom: -20px; left: -20px;
+            width: 110px; height: 110px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(61,104,255,0.28), transparent 70%);
+            pointer-events: none;
+        }
+
+        .tagline-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--secondary);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            position: relative; z-index: 1;
+        }
+
+        .tagline-box {
+            flex: 1;
+            background: rgba(255,255,255,0.07);
+            border: 1.5px dashed rgba(255,255,255,0.22);
+            border-radius: 12px;
+            padding: 1.3rem;
+            min-height: 170px;
+            position: relative; z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.85rem;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .tagline-footer { margin-top: 1.3rem; position: relative; z-index: 1; }
+
+        .tagline-brand {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .tagline-brand span { color: var(--secondary); }
+        .tagline-footer p { font-size: 0.76rem; color: rgba(255,255,255,0.55); margin-top: 0.25rem; }
+
+        /* ============ PANEL 2: PAYMENT ============ */
+        .payment-layout { max-width: 820px; margin: 0 auto; }
+
+        .payment-hero {
+            background: linear-gradient(135deg, #0038FF, #0028CC, #1A1F35);
+            border-radius: 18px;
+            padding: 2.5rem;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .payment-hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(0,212,255,0.18), transparent 60%),
+                        radial-gradient(circle at 80% 20%, rgba(61,104,255,0.2), transparent 50%);
+            pointer-events: none;
+        }
+
+        .payment-hero h2 {
+            font-family: 'Barlow', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            position: relative; z-index: 1;
+        }
+
+        .payment-hero p { color: rgba(255,255,255,0.8); position: relative; z-index: 1; font-size: 0.95rem; }
+
+        .payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.3rem; margin-bottom: 1.8rem; }
+
+        .payment-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.8rem;
+            border: 2px solid var(--light-gray);
+            cursor: pointer;
+            transition: all 0.28s;
+            text-align: center;
+        }
+
+        .payment-card:hover { border-color: var(--primary); box-shadow: 0 10px 28px rgba(0,56,255,0.12); transform: translateY(-4px); }
+
+        .payment-card .p-icon { font-size: 2.8rem; margin-bottom: 0.9rem; }
+        .payment-card h3 { font-family: 'Barlow', sans-serif; font-size: 1.2rem; font-weight: 700; color: var(--dark); margin-bottom: 0.5rem; }
+        .payment-card p { color: var(--gray); font-size: 0.88rem; line-height: 1.5; }
+
+        .p-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 1.2rem;
+            padding: 0.62rem 1.4rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            border-radius: 50px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.28s;
+            box-shadow: 0 4px 14px rgba(0,56,255,0.28);
+        }
+
+        .p-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,56,255,0.4); }
+
+        .process-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.8rem;
+            border: 1.5px solid var(--light-gray);
+            box-shadow: 0 4px 18px rgba(0,56,255,0.05);
+        }
+
+        .process-card h3 {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.2rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        .process-steps { display: flex; flex-direction: column; gap: 0.9rem; }
+
+        .process-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 0.8rem;
+            border-radius: 10px;
+            background: #F6F9FF;
+            border: 1px solid #E4ECFF;
+        }
+
+        .step-num {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.8rem;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 { font-weight: 700; font-size: 0.88rem; color: var(--dark); margin-bottom: 0.18rem; }
+        .step-content p { font-size: 0.8rem; color: var(--gray); line-height: 1.5; }
+
+        /* ============ PANEL 3: PROGRESS ============ */
+        .progress-panel { max-width: 700px; margin: 0 auto; text-align: center; padding: 3.5rem 2rem; }
+        .progress-panel .big-icon { font-size: 4.5rem; margin-bottom: 1.3rem; }
+        .progress-panel h2 { font-family: 'Barlow', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--dark); margin-bottom: 0.7rem; }
+        .progress-panel > p { color: var(--gray); font-size: 0.95rem; max-width: 440px; margin: 0 auto 1.8rem; line-height: 1.7; }
+
+        .progress-placeholder {
+            background: #fff;
+            border-radius: 16px;
+            padding: 2.5rem;
+            border: 2px dashed #CBD5E1;
+            color: #94A3B8;
+            font-size: 0.93rem;
+            font-style: italic;
+            margin-top: 1.5rem;
+            line-height: 1.7;
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Responsive */
+        @media (max-width: 960px) {
+            .dashboard-layout { grid-template-columns: 1fr; }
+            .dashboard-right { position: static; }
+            .services-grid { grid-template-columns: repeat(2, 1fr); }
+            .payment-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 680px) {
+            .portal-topbar { padding: 0 1.2rem; height: auto; padding-top: 0.8rem; padding-bottom: 0.8rem; flex-wrap: wrap; gap: 0.5rem; }
+            .topbar-left { flex-wrap: wrap; gap: 0.6rem; }
+            .topbar-nav { gap: 0.2rem; }
+            .topbar-link { padding: 0.4rem 0.7rem; font-size: 0.78rem; }
+            .portal-nav { padding: 0 1rem; top: auto; overflow-x: auto; }
+            .portal-tab { padding: 0.85rem 1rem; font-size: 0.85rem; }
+            .portal-body { padding: 1.5rem 1rem 3rem; }
+            .services-grid { grid-template-columns: 1fr 1fr; }
+            .docs-grid { grid-template-columns: 1fr; }
+            .greeting-text { display: none; }
+        }
+
+        /* ============ PANEL 3: PROJECT PROGRESS (REDESIGNED) ============ */
+
+        /* Project selector bar */
+        .project-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+        }
+
+        .project-selector-label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            white-space: nowrap;
+        }
+
+        .proj-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.25rem;
+            border-radius: 50px;
+            border: 2px solid var(--light-gray);
+            background: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 2px 8px rgba(0,56,255,0.06);
+        }
+
+        .proj-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .proj-btn.active {
+            background: linear-gradient(135deg, var(--primary), #1a56ff);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(0,56,255,0.3);
+        }
+
+        .proj-btn .proj-status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            flex-shrink: 0;
+        }
+
+        .proj-btn.active .proj-status-dot {
+            background: rgba(255,255,255,0.8);
+        }
+
+        /* Project detail card */
+        .project-detail-card {
+            background: #fff;
+            border-radius: 20px;
+            border: 1.5px solid var(--light-gray);
+            box-shadow: 0 4px 24px rgba(0,56,255,0.07);
+            overflow: hidden;
+            display: none;
+            animation: fadeInUp 0.35s ease;
+        }
+
+        .project-detail-card.active { display: block; }
+
+        /* Project card header */
+        .project-card-header {
+            background: linear-gradient(135deg, #0038FF, #0028CC, #1A1F35);
+            padding: 1.6rem 2rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card-header::before {
+            content: '';
+            position: absolute;
+            top: -20px; right: -20px;
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,212,255,0.2), transparent 70%);
+            pointer-events: none;
+        }
+
+        .project-card-header-left { position: relative; z-index: 1; }
+        .project-card-header-left h3 {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+        }
+
+        .project-card-header-left p {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.75);
+        }
+
+        .project-overall-badge {
+            background: rgba(255,255,255,0.15);
+            border: 1.5px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            padding: 0.4rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #fff;
+            position: relative;
+            z-index: 1;
+            white-space: nowrap;
+        }
+
+        .project-card-body { padding: 2rem; }
+
+        /* Timeline track */
+        .timeline-wrapper {
+            margin-bottom: 2rem;
+        }
+
+        .timeline-track-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 1rem;
+        }
+
+        .timeline-track {
+            position: relative;
+            padding: 0 0 0 0;
+        }
+
+        /* The rail line */
+        .timeline-rail {
+            position: relative;
+            height: 6px;
+            background: var(--light-gray);
+            border-radius: 99px;
+            margin: 0 3rem;
+            margin-bottom: 0;
+        }
+
+        .timeline-rail-fill {
+            position: absolute;
+            top: 0; left: 0;
+            height: 100%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.5s ease;
+        }
+
+        /* Milestone nodes row */
+        .timeline-milestones {
+            display: flex;
+            justify-content: space-between;
+            margin-top: -22px;
+            padding: 0 0;
+            position: relative;
+        }
+
+        .milestone-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .milestone-node {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--gray);
+            transition: all 0.28s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 2;
+        }
+
+        .milestone-item.reached .milestone-node {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(0,56,255,0.35);
+        }
+
+        .milestone-item.active-ms .milestone-node {
+            transform: scale(1.18);
+            box-shadow: 0 0 0 4px rgba(0,56,255,0.18), 0 6px 20px rgba(0,56,255,0.35);
+        }
+
+        .milestone-node:hover { transform: scale(1.12); }
+        .milestone-item.reached .milestone-node:hover { transform: scale(1.18); }
+
+        .milestone-pct {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--gray);
+            transition: color 0.25s;
+        }
+
+        .milestone-item.reached .milestone-pct { color: var(--primary); }
+        .milestone-item.active-ms .milestone-pct { color: var(--primary); font-size: 0.82rem; }
+
+        .milestone-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--gray);
+            text-align: center;
+            transition: color 0.25s;
+        }
+
+        .milestone-item.reached .milestone-label { color: var(--dark); }
+
+        /* Documentation panel */
+        .milestone-doc-panel {
+            display: none;
+            margin-top: 1.5rem;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .milestone-doc-panel.active { display: block; }
+
+        .doc-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-gray);
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .doc-panel-title {
+            font-family: 'Barlow', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .doc-panel-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.82rem;
+            color: var(--gray);
+        }
+
+        /* Image + week grid */
+        .doc-images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.1rem;
+        }
+
+        .doc-img-card {
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1.5px solid var(--light-gray);
+            background: #fff;
+            transition: all 0.25s;
+        }
+
+        .doc-img-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 28px rgba(0,56,255,0.12);
+            border-color: var(--primary);
+        }
+
+        .doc-img-placeholder {
+            width: 100%;
+            height: 160px;
+            background: linear-gradient(135deg, #E4ECFF, #D6E4FF);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doc-img-placeholder::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent, transparent 10px,
+                rgba(0,56,255,0.04) 10px, rgba(0,56,255,0.04) 20px
+            );
+        }
+
+        .doc-img-placeholder .ph-icon {
+            font-size: 2rem;
+            position: relative; z-index: 1;
+        }
+
+        .doc-img-placeholder .ph-text {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: #82A4D8;
+            position: relative; z-index: 1;
+        }
+
+        .doc-img-footer {
+            padding: 0.7rem 0.85rem;
+            border-top: 1.5px solid var(--light-gray);
+        }
+
+        .doc-week-label {
+            font-weight: 800;
+            font-size: 0.8rem;
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .doc-week-desc {
+            font-size: 0.73rem;
+            color: var(--gray);
+            line-height: 1.4;
+        }
+
+        /* Notes section */
+        .milestone-notes {
+            margin-top: 1.2rem;
+            background: #F6F9FF;
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            border: 1px solid #DDE6FF;
+        }
+
+        .milestone-notes-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .milestone-notes p {
+            font-size: 0.82rem;
+            color: var(--gray);
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .timeline-rail { margin: 0 1.5rem; }
+            .doc-images-grid { grid-template-columns: 1fr 1fr; }
+            .project-card-body { padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOP BAR ===== -->
+    <div class="portal-topbar">
+        <div class="topbar-left">
+            <a href="/" class="brand">DREAM<span>WORKS</span></a>
+            <nav class="topbar-nav">
+                <a href="/registration" class="topbar-link outbound">👤 Register</a>
+            </nav>
+        </div>
+        <div class="topbar-right">
+            <div class="greeting-text">
+                Logged in as <strong id="portalGreeting">Customer</strong>
+            </div>
+            <a href="/" class="topbar-btn">← Sign Out</a>
+        </div>
+    </div>
+
+    <!-- ===== 3-BUTTON PORTAL NAV ===== -->
+    <div class="portal-nav">
+        <button class="portal-tab active" onclick="switchTab('dashboard', this)">
+            <span>🏠</span> My Dashboard
+        </button>
+        <button class="portal-tab" onclick="switchTab('payment', this)">
+            <span>💳</span> Payment &amp; Meetup
+        </button>
+        <button class="portal-tab" onclick="switchTab('progress', this)">
+            <span>📊</span> Project Progress
+            <span class="tab-badge">0</span>
+        </button>
+    </div>
+
+    <!-- ===== PORTAL BODY ===== -->
+    <div class="portal-body">
+
+        <!-- ======= PANEL 1: DASHBOARD ======= -->
+        <div class="portal-panel active" id="panel-dashboard">
+
+            <div class="quick-bar" style="margin-bottom:1.5rem;">
+                <button class="qbtn qbtn-primary" onclick="switchTab('payment', document.querySelectorAll('.portal-tab')[1])">
+                    💳 Proceed to Payment
+                </button>
+                <button class="qbtn qbtn-ghost" onclick="switchTab('progress', document.querySelectorAll('.portal-tab')[2])">
+                    📊 Check Project Status
+                </button>
+                <a href="/customer/quote" class="qbtn qbtn-ghost">📋 Request a New Quote</a>
+            </div>
+
+            <div class="dashboard-layout">
+
+                <!-- LEFT COLUMN -->
+                <div class="dashboard-left">
+
+                    <!-- Services -->
+                    <div class="portal-card">
+                        <div class="section-title">🛠️ Our Services</div>
+                        <div class="services-grid">
+                            <div class="service-tile">
+                                <div class="tile-icon">❄️</div>
+                                <div class="tile-name">AC Installation</div>
+                                <div class="tile-desc">New split or window type setup & commissioning</div>
+                                <div class="tile-cta">Request Quote</div>
+                            </div>
+                            <div class="service-tile">
+                                <div class="tile-icon">🔧</div>
+                                <div class="tile-name">AC Repair</div>
+                                <div class="tile-desc">Diagnose & fix cooling, drainage & electrical issues</div>
+                                <div class="tile-cta">Request Quote</div>
+                            </div>
+                            <div class="service-tile">
+                                <div class="tile-icon">✅</div>
+                                <div class="tile-name">Preventive Maintenance</div>
+                                <div class="tile-desc">Regular cleaning, gas check & performance testing</div>
+                                <div class="tile-cta">Request Quote</div>
+                            </div>
+                           
+                            <div class="service-tile">
+                                <div class="tile-icon">🏗️</div>
+                                <div class="tile-name">HVAC Ductwork</div>
+                                <div class="tile-desc">Fresh air, exhaust & ventilation duct installation</div>
+                                <div class="tile-cta">Request Quote</div>
+                            </div>
+                            <div class="service-tile">
+                                <div class="tile-icon">🚒</div>
+                                <div class="tile-name">Fire Protection</div>
+                                <div class="tile-desc">Sprinkler systems, suppression & compliance</div>
+                                <div class="tile-cta">Request Quote</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accomplishments / Documentation -->
+                    <div class="portal-card">
+                        <div class="section-title">📸 What We've Accomplished</div>
+                        <p style="color:var(--gray); font-size:0.88rem; margin-bottom:1.2rem;">Completed and ongoing projects across Metro Manila.</p>
+                        <div class="docs-grid">
+                            <div class="doc-card">
+                                <div class="doc-img">
+                                    <div class="doc-img-icon">🖼️</div>
+                                    <div class="doc-img-text">Image Placeholder</div>
+                                </div>
+                                <div class="doc-info">
+                                    <div class="doc-title">Commercial AC Installation — Pasig</div>
+                                    <div class="doc-meta">
+                                        <span class="status-pill done">✓ Completed</span>
+                                        4 units · Jan 2025
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="doc-card">
+                                <div class="doc-img">
+                                    <div class="doc-img-icon">🖼️</div>
+                                    <div class="doc-img-text">Image Placeholder</div>
+                                </div>
+                                <div class="doc-info">
+                                    <div class="doc-title">Cold Room Installation — Makati</div>
+                                    <div class="doc-meta">
+                                        <span class="status-pill done">✓ Completed</span>
+                                        Refrigeration · Dec 2024
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="doc-card">
+                                <div class="doc-img">
+                                    <div class="doc-img-icon">🖼️</div>
+                                    <div class="doc-img-text">Image Placeholder</div>
+                                </div>
+                                <div class="doc-info">
+                                    <div class="doc-title">Office HVAC Ductwork — Ortigas</div>
+                                    <div class="doc-meta">
+                                        <span class="status-pill ongoing">⏳ Ongoing</span>
+                                        Ductwork · Feb 2025
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="doc-card">
+                                <div class="doc-img">
+                                    <div class="doc-img-icon">🖼️</div>
+                                    <div class="doc-img-text">Image Placeholder</div>
+                                </div>
+                                <div class="doc-info">
+                                    <div class="doc-title">Fire Sprinkler System — BGC</div>
+                                    <div class="doc-meta">
+                                        <span class="status-pill done">✓ Completed</span>
+                                        Fire Protection · Nov 2024
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- end dashboard-left -->
+
+                <!-- RIGHT: Tagline Card -->
+                <div class="dashboard-right">
+                    <div class="tagline-card">
+                        <div class="tagline-label">✦ Our Promise</div>
+                        <div class="tagline-box">
+                            <!-- Tagline content — leave blank for now -->
+                            <span>Tagline / message<br>coming soon...</span>
+                        </div>
+                        <div class="tagline-footer">
+                            <div class="tagline-brand">DREAM<span>WORKS</span></div>
+                            <p>Professional HVAC · Metro Manila</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- end panel-dashboard -->
+
+        <!-- ======= PANEL 2: PAYMENT & MEETUP ======= -->
+        <div class="portal-panel" id="panel-payment">
+            <div class="payment-layout">
+
+                <div class="payment-hero">
+                    <h2>💳 Payment &amp; Negotiations</h2>
+                    <p>Choose how you'd like to proceed with your quote and set up a meetup with our team</p>
+                </div>
+
+                <div class="payment-grid">
+                    <div class="payment-card">
+                        <div class="p-icon">💳</div>
+                        <h3>Online Payment</h3>
+                        <p>Secure payment via GCash, PayMaya, or bank transfer. Official receipt and confirmation sent automatically.</p>
+                        <button class="p-cta">Pay Online →</button>
+                    </div>
+                    <div class="payment-card">
+                        <div class="p-icon">🤝</div>
+                        <h3>Schedule a Meetup</h3>
+                        <p>Prefer a face-to-face discussion? Book an on-site or office visit with our project manager for negotiations.</p>
+                        <button class="p-cta">Book Meetup →</button>
+                    </div>
+                </div>
+
+                <div class="process-card">
+                    <h3>📋 How the Process Works</h3>
+                    <div class="process-steps">
+                        <div class="process-step">
+                            <div class="step-num">1</div>
+                            <div class="step-content">
+                                <h4>Submit Your Quote Request</h4>
+                                <p>Fill the Get a Quote form with your service needs and property details.</p>
+                            </div>
+                        </div>
+                        <div class="process-step">
+                            <div class="step-num">2</div>
+                            <div class="step-content">
+                                <h4>Receive Initial Estimate</h4>
+                                <p>Our team prepares a detailed cost breakdown and sends it to your email within 24 hours.</p>
+                            </div>
+                        </div>
+                        <div class="process-step">
+                            <div class="step-num">3</div>
+                            <div class="step-content">
+                                <h4>Negotiate &amp; Finalize</h4>
+                                <p>Meet with our project manager in person or via call to finalize scope, timeline, and pricing.</p>
+                            </div>
+                        </div>
+                        <div class="process-step">
+                            <div class="step-num">4</div>
+                            <div class="step-content">
+                                <h4>Pay &amp; Confirm</h4>
+                                <p>Settle the agreed downpayment to secure your schedule and kick off the project.</p>
+                            </div>
+                        </div>
+                        <div class="process-step">
+                            <div class="step-num">5</div>
+                            <div class="step-content">
+                                <h4>Track Progress Live</h4>
+                                <p>Monitor your project status, milestones, and updates directly from this portal.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- end panel-payment -->
+
+        <!-- ======= PANEL 3: PROJECT PROGRESS ======= -->
+        <div class="portal-panel" id="panel-progress">
+
+            <!-- Project selector buttons -->
+            <div class="project-selector">
+                <span class="project-selector-label">Your Projects:</span>
+                <button class="proj-btn active" onclick="selectProject(0, this)">
+                    <span class="proj-status-dot"></span> Project #1 — AC Installation
+                </button>
+                <button class="proj-btn" onclick="selectProject(1, this)">
+                    <span class="proj-status-dot"></span> Project #2 — Ductwork
+                </button>
+                <button class="proj-btn" onclick="selectProject(2, this)">
+                    <span class="proj-status-dot"></span> Project #3 — Refrigeration
+                </button>
+            </div>
+
+            <!-- ===== PROJECT 1 ===== -->
+            <div class="project-detail-card active" id="project-0">
+                <div class="project-card-header">
+                    <div class="project-card-header-left">
+                        <h3>🏗️ AC Installation — Pasig City</h3>
+                        <p>Started: Jan 20, 2025 &nbsp;·&nbsp; Technician: Engr. Santos &nbsp;·&nbsp; 4 units</p>
+                    </div>
+                    <div class="project-overall-badge">⏳ In Progress — 50%</div>
+                </div>
+                <div class="project-card-body">
+
+                    <!-- Timeline -->
+                    <div class="timeline-wrapper">
+                        <div class="timeline-track-label">Project Timeline — Click a milestone to view documentation</div>
+                        <div class="timeline-track">
+                            <div class="timeline-rail">
+                                <div class="timeline-rail-fill" style="width: 50%;"></div>
+                            </div>
+                            <div class="timeline-milestones">
+                                <div class="milestone-item reached active-ms" onclick="showMilestone('p0', 1, this)">
+                                    <div class="milestone-node">25%</div>
+                                    <div class="milestone-pct">Phase 1</div>
+                                    <div class="milestone-label">Site Prep &amp;<br>Materials</div>
+                                </div>
+                                <div class="milestone-item reached" onclick="showMilestone('p0', 2, this)">
+                                    <div class="milestone-node">50%</div>
+                                    <div class="milestone-pct">Phase 2</div>
+                                    <div class="milestone-label">Installation<br>Works</div>
+                                </div>
+                                <div class="milestone-item" onclick="showMilestone('p0', 3, this)">
+                                    <div class="milestone-node">75%</div>
+                                    <div class="milestone-pct">Phase 3</div>
+                                    <div class="milestone-label">Testing &amp;<br>Commissioning</div>
+                                </div>
+                                <div class="milestone-item" onclick="showMilestone('p0', 4, this)">
+                                    <div class="milestone-node">100%</div>
+                                    <div class="milestone-pct">Phase 4</div>
+                                    <div class="milestone-label">Final Handover<br>&amp; Docs</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Milestone Doc Panels -->
+                    <div class="milestone-doc-panel active" id="p0-ms1">
+                        <div class="doc-panel-header">
+                            <div class="doc-panel-title">📦 Phase 1 — Site Preparation &amp; Materials (25%)</div>
+                            <div class="doc-panel-meta"><span class="status-pill done">✓ Completed</span> Week 1–2</div>
+                        </div>
+                        <div class="doc-images-grid">
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 1</div><div class="doc-week-desc">Site survey &amp; area marking completed</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 1</div><div class="doc-week-desc">Materials delivery &amp; inspection</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 2</div><div class="doc-week-desc">Bracket mounting &amp; wiring prep</div></div></div>
+                        </div>
+                        <div class="milestone-notes"><div class="milestone-notes-title">📝 Technician Notes</div><p>Site cleared and all 4 unit locations confirmed with client. Materials checked against BOM — all items accounted for. Minor wall patching needed at Unit 3 location.</p></div>
+                    </div>
+
+                    <div class="milestone-doc-panel" id="p0-ms2">
+                        <div class="doc-panel-header">
+                            <div class="doc-panel-title">🔧 Phase 2 — Installation Works (50%)</div>
+                            <div class="doc-panel-meta"><span class="status-pill done">✓ Completed</span> Week 3–4</div>
+                        </div>
+                        <div class="doc-images-grid">
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 3</div><div class="doc-week-desc">Indoor units mounted on all 4 locations</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 3</div><div class="doc-week-desc">Outdoor condenser units positioned</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 4</div><div class="doc-week-desc">Refrigerant line connection &amp; insulation</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 4</div><div class="doc-week-desc">Electrical wiring &amp; drain line routing</div></div></div>
+                        </div>
+                        <div class="milestone-notes"><div class="milestone-notes-title">📝 Technician Notes</div><p>All 4 indoor and outdoor units successfully mounted. Refrigerant lines connected and pressure tested. Drain lines routed to exterior. Electrical connections verified. Ready for commissioning.</p></div>
+                    </div>
+
+                    <div class="milestone-doc-panel" id="p0-ms3">
+                        <div class="doc-panel-header">
+                            <div class="doc-panel-title">⚡ Phase 3 — Testing &amp; Commissioning (75%)</div>
+                            <div class="doc-panel-meta"><span class="status-pill ongoing">⏳ Pending</span> Week 5–6</div>
+                        </div>
+                        <div class="doc-images-grid">
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 5</div><div class="doc-week-desc">System power-on &amp; initial cooling test</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 6</div><div class="doc-week-desc">Performance &amp; temperature calibration</div></div></div>
+                        </div>
+                        <div class="milestone-notes"><div class="milestone-notes-title">📝 Technician Notes</div><p>Phase 3 not yet started. Scheduled to begin Week 5. Client to ensure power supply is ready on site before technician visit.</p></div>
+                    </div>
+
+                    <div class="milestone-doc-panel" id="p0-ms4">
+                        <div class="doc-panel-header">
+                            <div class="doc-panel-title">✅ Phase 4 — Final Handover (100%)</div>
+                            <div class="doc-panel-meta"><span class="status-pill ongoing">⏳ Pending</span> Week 7</div>
+                        </div>
+                        <div class="doc-images-grid">
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 7</div><div class="doc-week-desc">Client walkthrough &amp; demo</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 7</div><div class="doc-week-desc">As-built docs &amp; warranty handover</div></div></div>
+                        </div>
+                        <div class="milestone-notes"><div class="milestone-notes-title">📝 Technician Notes</div><p>Phase 4 pending completion of testing phase. Final documentation, warranty certificates, and as-built drawings to be prepared upon successful commissioning.</p></div>
+                    </div>
+
+                </div>
+            </div><!-- end project-0 -->
+
+            <!-- ===== PROJECT 2 ===== -->
+            <div class="project-detail-card" id="project-1">
+                <div class="project-card-header">
+                    <div class="project-card-header-left">
+                        <h3>🏗️ HVAC Ductwork — Ortigas Center</h3>
+                        <p>Started: Feb 3, 2025 &nbsp;·&nbsp; Technician: Engr. Reyes &nbsp;·&nbsp; Commercial Office</p>
+                    </div>
+                    <div class="project-overall-badge">⏳ In Progress — 25%</div>
+                </div>
+                <div class="project-card-body">
+                    <div class="timeline-wrapper">
+                        <div class="timeline-track-label">Project Timeline — Click a milestone to view documentation</div>
+                        <div class="timeline-track">
+                            <div class="timeline-rail">
+                                <div class="timeline-rail-fill" style="width: 25%;"></div>
+                            </div>
+                            <div class="timeline-milestones">
+                                <div class="milestone-item reached active-ms" onclick="showMilestone('p1', 1, this)">
+                                    <div class="milestone-node">25%</div>
+                                    <div class="milestone-pct">Phase 1</div>
+                                    <div class="milestone-label">Design &amp;<br>Layout</div>
+                                </div>
+                                <div class="milestone-item" onclick="showMilestone('p1', 2, this)">
+                                    <div class="milestone-node">50%</div>
+                                    <div class="milestone-pct">Phase 2</div>
+                                    <div class="milestone-label">Duct<br>Fabrication</div>
+                                </div>
+                                <div class="milestone-item" onclick="showMilestone('p1', 3, this)">
+                                    <div class="milestone-node">75%</div>
+                                    <div class="milestone-pct">Phase 3</div>
+                                    <div class="milestone-label">Installation<br>&amp; Sealing</div>
+                                </div>
+                                <div class="milestone-item" onclick="showMilestone('p1', 4, this)">
+                                    <div class="milestone-node">100%</div>
+                                    <div class="milestone-pct">Phase 4</div>
+                                    <div class="milestone-label">Balancing &amp;<br>Handover</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="milestone-doc-panel active" id="p1-ms1">
+                        <div class="doc-panel-header">
+                            <div class="doc-panel-title">📐 Phase 1 — Design &amp; Layout (25%)</div>
+                            <div class="doc-panel-meta"><span class="status-pill done">✓ Completed</span> Week 1</div>
+                        </div>
+                        <div class="doc-images-grid">
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 1</div><div class="doc-week-desc">Site measurement &amp; ceiling survey</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 1</div><div class="doc-week-desc">Duct routing plan approved by client</div></div></div>
+                        </div>
+                        <div class="milestone-notes"><div class="milestone-notes-title">📝 Technician Notes</div><p>Full floor plan measured and duct layout finalized. Client approved routing plan — 3 supply ducts and 2 return air paths confirmed.</p></div>
+                    </div>
+                    <div class="milestone-doc-panel" id="p1-ms2">
+                        <div class="doc-panel-header">
+                            <div class="doc-panel-title">🏭 Phase 2 — Duct Fabrication (50%)</div>
+                            <div class="doc-panel-meta"><span class="status-pill ongoing">⏳ Pending</span> Week 2–3</div>
+                        </div>
+                        <div class="doc-images-grid">
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 2</div><div class="doc-week-desc">Sheet metal cutting &amp; forming</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 3</div><div class="doc-week-desc">Duct sections ready for delivery</div></div></div>
+                        </div>
+                        <div class="milestone-notes"><div class="milestone-notes-title">📝 Technician Notes</div><p>Fabrication scheduled to start Week 2. Galvanized steel sheets ordered. ETA for delivery: Feb 10.</p></div>
+                    </div>
+                    <div class="milestone-doc-panel" id="p1-ms3">
+                        <div class="doc-panel-header">
+                            <div class="doc-panel-title">🔩 Phase 3 — Installation &amp; Sealing (75%)</div>
+                            <div class="doc-panel-meta"><span class="status-pill ongoing">⏳ Pending</span> Week 4–6</div>
+                        </div>
+                        <div class="doc-images-grid">
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 4</div><div class="doc-week-desc">Duct hanger installation</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 5</div><div class="doc-week-desc">Duct sections joined &amp; sealed</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 6</div><div class="doc-week-desc">Insulation wrap completed</div></div></div>
+                        </div>
+                        <div class="milestone-notes"><div class="milestone-notes-title">📝 Technician Notes</div><p>Phase 3 to begin after fabrication delivery. Ceiling access coordinated with building admin.</p></div>
+                    </div>
+                    <div class="milestone-doc-panel" id="p1-ms4">
+                        <div class="doc-panel-header">
+                            <div class="doc-panel-title">✅ Phase 4 — Balancing &amp; Handover (100%)</div>
+                            <div class="doc-panel-meta"><span class="status-pill ongoing">⏳ Pending</span> Week 7</div>
+                        </div>
+                        <div class="doc-images-grid">
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 7</div><div class="doc-week-desc">Airflow balancing &amp; damper adjustment</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 7</div><div class="doc-week-desc">Final inspection &amp; client sign-off</div></div></div>
+                        </div>
+                        <div class="milestone-notes"><div class="milestone-notes-title">📝 Technician Notes</div><p>Phase 4 pending. Airflow testing equipment reserved for Week 7.</p></div>
+                    </div>
+                </div>
+            </div><!-- end project-1 -->
+
+            <!-- ===== PROJECT 3 ===== -->
+            <div class="project-detail-card" id="project-2">
+                <div class="project-card-header">
+                    <div class="project-card-header-left">
+                        <h3>🧊 Cold Room Installation — Makati</h3>
+                        <p>Started: Feb 10, 2025 &nbsp;·&nbsp; Technician: Engr. Cruz &nbsp;·&nbsp; Commercial Refrigeration</p>
+                    </div>
+                    <div class="project-overall-badge">🆕 Just Started — 25%</div>
+                </div>
+                <div class="project-card-body">
+                    <div class="timeline-wrapper">
+                        <div class="timeline-track-label">Project Timeline — Click a milestone to view documentation</div>
+                        <div class="timeline-track">
+                            <div class="timeline-rail">
+                                <div class="timeline-rail-fill" style="width: 25%;"></div>
+                            </div>
+                            <div class="timeline-milestones">
+                                <div class="milestone-item reached active-ms" onclick="showMilestone('p2', 1, this)">
+                                    <div class="milestone-node">25%</div>
+                                    <div class="milestone-pct">Phase 1</div>
+                                    <div class="milestone-label">Civil &amp; Insulation<br>Works</div>
+                                </div>
+                                <div class="milestone-item" onclick="showMilestone('p2', 2, this)">
+                                    <div class="milestone-node">50%</div>
+                                    <div class="milestone-pct">Phase 2</div>
+                                    <div class="milestone-label">Refrigeration<br>Unit Install</div>
+                                </div>
+                                <div class="milestone-item" onclick="showMilestone('p2', 3, this)">
+                                    <div class="milestone-node">75%</div>
+                                    <div class="milestone-pct">Phase 3</div>
+                                    <div class="milestone-label">Piping &amp;<br>Charging</div>
+                                </div>
+                                <div class="milestone-item" onclick="showMilestone('p2', 4, this)">
+                                    <div class="milestone-node">100%</div>
+                                    <div class="milestone-pct">Phase 4</div>
+                                    <div class="milestone-label">Testing &amp;<br>Handover</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="milestone-doc-panel active" id="p2-ms1">
+                        <div class="doc-panel-header">
+                            <div class="doc-panel-title">🏗️ Phase 1 — Civil &amp; Insulation Works (25%)</div>
+                            <div class="doc-panel-meta"><span class="status-pill done">✓ Completed</span> Week 1</div>
+                        </div>
+                        <div class="doc-images-grid">
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 1</div><div class="doc-week-desc">Cold room panel assembly &amp; flooring</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 1</div><div class="doc-week-desc">Polyurethane insulation panels installed</div></div></div>
+                        </div>
+                        <div class="milestone-notes"><div class="milestone-notes-title">📝 Technician Notes</div><p>Cold room structure assembled on site. 100mm PU panels confirmed per spec. Door frame aligned and sealed. Ready for refrigeration unit installation.</p></div>
+                    </div>
+                    <div class="milestone-doc-panel" id="p2-ms2">
+                        <div class="doc-panel-header">
+                            <div class="doc-panel-title">❄️ Phase 2 — Refrigeration Unit Install (50%)</div>
+                            <div class="doc-panel-meta"><span class="status-pill ongoing">⏳ Pending</span> Week 2–3</div>
+                        </div>
+                        <div class="doc-images-grid">
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 2</div><div class="doc-week-desc">Condensing unit positioning &amp; mounting</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 3</div><div class="doc-week-desc">Evaporator coil installation inside room</div></div></div>
+                        </div>
+                        <div class="milestone-notes"><div class="milestone-notes-title">📝 Technician Notes</div><p>Refrigeration unit delivery confirmed for Week 2. Condensing unit to be placed on roof slab.</p></div>
+                    </div>
+                    <div class="milestone-doc-panel" id="p2-ms3">
+                        <div class="doc-panel-header">
+                            <div class="doc-panel-title">🔧 Phase 3 — Piping &amp; Gas Charging (75%)</div>
+                            <div class="doc-panel-meta"><span class="status-pill ongoing">⏳ Pending</span> Week 4</div>
+                        </div>
+                        <div class="doc-images-grid">
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 4</div><div class="doc-week-desc">Copper piping &amp; insulation wrap</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 4</div><div class="doc-week-desc">Refrigerant R404A charging</div></div></div>
+                        </div>
+                        <div class="milestone-notes"><div class="milestone-notes-title">📝 Technician Notes</div><p>Phase 3 pending. R404A refrigerant on order. Leak test to be conducted immediately after charging.</p></div>
+                    </div>
+                    <div class="milestone-doc-panel" id="p2-ms4">
+                        <div class="doc-panel-header">
+                            <div class="doc-panel-title">✅ Phase 4 — Testing &amp; Handover (100%)</div>
+                            <div class="doc-panel-meta"><span class="status-pill ongoing">⏳ Pending</span> Week 5</div>
+                        </div>
+                        <div class="doc-images-grid">
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 5</div><div class="doc-week-desc">Pull-down test to target temperature</div></div></div>
+                            <div class="doc-img-card"><div class="doc-img-placeholder"><div class="ph-icon">🖼️</div><div class="ph-text">Image Placeholder</div></div><div class="doc-img-footer"><div class="doc-week-label">Week 5</div><div class="doc-week-desc">Client walkthrough &amp; training</div></div></div>
+                        </div>
+                        <div class="milestone-notes"><div class="milestone-notes-title">📝 Technician Notes</div><p>Phase 4 pending. Temperature stability test will run for 24hrs before client sign-off.</p></div>
+                    </div>
+                </div>
+            </div><!-- end project-2 -->
+
+        </div><!-- end panel-progress -->
+
+    </div><!-- end portal-body -->
+
+    <script>
+        // Restore greeting from session
+        const name = sessionStorage.getItem('customerName');
+        if (name) document.getElementById('portalGreeting').textContent = name;
+
+        function switchTab(panelId, btnEl) {
+            document.querySelectorAll('.portal-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.portal-tab').forEach(b => b.classList.remove('active'));
+            document.getElementById('panel-' + panelId).classList.add('active');
+            if (btnEl) btnEl.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectProject(idx, btnEl) {
+            document.querySelectorAll('.proj-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.project-detail-card').forEach(c => c.classList.remove('active'));
+            btnEl.classList.add('active');
+            document.getElementById('project-' + idx).classList.add('active');
+        }
+
+        function showMilestone(projectId, msNum, nodeEl) {
+            // Deactivate all milestone panels for this project
+            const card = document.getElementById('project-' + projectId.replace('p',''));
+            card.querySelectorAll('.milestone-doc-panel').forEach(p => p.classList.remove('active'));
+            // Deactivate all milestone nodes for this project
+            card.querySelectorAll('.milestone-item').forEach(m => m.classList.remove('active-ms'));
+            // Activate selected
+            document.getElementById(projectId + '-ms' + msNum).classList.add('active');
+            nodeEl.classList.add('active-ms');
+            // Scroll to doc panel smoothly
+            setTimeout(() => {
+                document.getElementById(projectId + '-ms' + msNum).scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 50);
+        }
+    </script>
+</body>
+</html>

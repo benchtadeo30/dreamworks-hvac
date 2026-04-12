@@ -1,0 +1,1946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Portal — DreamWorks HVAC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --primary: #0038FF;
+      --primary-dark: #0028CC;
+      --primary-light: #3D68FF;
+      --secondary: #00D4FF;
+      --dark: #0A0F1C;
+      --dark-blue: #1A1F35;
+      --gray: #64748B;
+      --light-gray: #E2E8F0;
+      --white: #FFFFFF;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --error: #EF4444;
+      --bg: #F0F4FF;
+      --card: #FFFFFF;
+      --sidebar-w: 260px;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--dark);
+    }
+
+    /* ─── TOP BAR ─── */
+    .topbar {
+      background: linear-gradient(135deg, #0038FF 0%, #0028CC 55%, #1A1F35 100%);
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 300;
+      box-shadow: 0 4px 24px rgba(0,56,255,0.25);
+    }
+    .topbar-left { display:flex; align-items:center; gap:1rem; }
+    .menu-btn {
+      background: none; border: none; cursor: pointer;
+      color:#fff; padding:6px; border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      transition: background 0.2s;
+    }
+    .menu-btn:hover { background: rgba(255,255,255,0.15); }
+    .brand {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+    }
+    .brand span { color: var(--secondary); }
+    .brand sub {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      opacity: 0.7;
+      display: block;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+    .topbar-right { display:flex; align-items:center; gap:1rem; }
+    .emp-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(255,255,255,0.12);
+      border-radius: 40px;
+      padding: 6px 14px 6px 6px;
+    }
+    .avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--secondary), var(--primary-light));
+      display: flex; align-items:center; justify-content:center;
+      font-weight: 700; font-size: 0.85rem; color: #fff;
+      flex-shrink: 0;
+    }
+    .emp-info { line-height: 1.2; }
+    .emp-name { font-size: 0.85rem; font-weight: 600; color:#fff; }
+    .emp-role { font-size: 0.7rem; color: rgba(255,255,255,0.65); }
+    .notif-btn {
+      position: relative;
+      background: rgba(255,255,255,0.12);
+      border: none; cursor: pointer;
+      color:#fff; width:38px; height:38px;
+      border-radius: 50%; display:flex; align-items:center; justify-content:center;
+      transition: background 0.2s;
+    }
+    .notif-btn:hover { background: rgba(255,255,255,0.25); }
+    .notif-dot {
+      position: absolute; top:6px; right:6px;
+      width:9px; height:9px;
+      background: var(--warning);
+      border-radius: 50%;
+      border: 2px solid var(--primary-dark);
+    }
+
+    /* ─── LAYOUT ─── */
+    .layout {
+      display: flex;
+      padding-top: 64px;
+      min-height: 100vh;
+    }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--dark);
+      position: fixed;
+      top: 64px; left: 0; bottom: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      z-index: 200;
+      transition: transform 0.3s ease, width 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar.collapsed { transform: translateX(-100%); }
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 199;
+    }
+    .sidebar-overlay.visible { display: block; }
+
+    .sidebar-section {
+      padding: 1.2rem 1rem 0.5rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.2rem;
+      color: rgba(255,255,255,0.65);
+      cursor: pointer;
+      border-radius: 10px;
+      margin: 2px 8px;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border: none; background: none; width: calc(100% - 16px);
+      text-align: left;
+    }
+    .nav-item svg { flex-shrink: 0; }
+    .nav-item:hover { background: rgba(255,255,255,0.07); color:#fff; }
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(0,56,255,0.5), rgba(0,212,255,0.2));
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(0,56,255,0.3);
+    }
+    .nav-item .badge {
+      margin-left: auto;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 20px;
+      min-width: 22px;
+      text-align: center;
+    }
+    .nav-item .badge.green { background: var(--success); }
+    .nav-item .badge.orange { background: var(--warning); }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .logout-btn {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      border-radius: 10px;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: none; background: none; width: 100%;
+    }
+    .logout-btn:hover { background: rgba(239,68,68,0.15); color: #EF4444; }
+
+    /* ─── MAIN ─── */
+    .main {
+      flex: 1;
+      margin-left: var(--sidebar-w);
+      padding: 1.5rem;
+      transition: margin-left 0.3s;
+      min-width: 0;
+    }
+    .main.expanded { margin-left: 0; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ─── PAGE HEADER ─── */
+    .page-header {
+      margin-bottom: 1.5rem;
+    }
+    .page-title {
+      font-family: 'Barlow', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--dark);
+      text-transform: uppercase;
+    }
+    .page-sub { font-size: 0.85rem; color: var(--gray); margin-top: 2px; }
+
+    /* ─── CARDS ─── */
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1.4rem;
+      box-shadow: 0 2px 12px rgba(0,56,255,0.06);
+      border: 1px solid rgba(0,56,255,0.07);
+    }
+    .card-title {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 1rem;
+      color: var(--dark);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .card-title .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--primary);
+    }
+
+    /* ─── GRID LAYOUTS ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+    .gap { gap: 1rem; }
+    .flex-col { display: flex; flex-direction: column; gap: 1rem; }
+
+    /* ─── STAT CARDS ─── */
+    .stat-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1.2rem;
+      box-shadow: 0 2px 12px rgba(0,56,255,0.06);
+      border: 1px solid rgba(0,56,255,0.07);
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .stat-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items:center; justify-content:center;
+      flex-shrink: 0;
+    }
+    .stat-icon.blue { background: rgba(0,56,255,0.1); color: var(--primary); }
+    .stat-icon.green { background: rgba(16,185,129,0.1); color: var(--success); }
+    .stat-icon.orange { background: rgba(245,158,11,0.1); color: var(--warning); }
+    .stat-icon.cyan { background: rgba(0,212,255,0.12); color: #0099BB; }
+    .stat-val { font-family:'Barlow',sans-serif; font-size:1.6rem; font-weight:800; line-height:1; }
+    .stat-label { font-size:0.75rem; color:var(--gray); font-weight:500; margin-top:2px; }
+
+    /* ─── STATUS PILLS ─── */
+    .pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 600;
+    }
+    .pill::before { content:''; width:6px; height:6px; border-radius:50%; }
+    .pill.green { background:rgba(16,185,129,0.12); color:#047857; }
+    .pill.green::before { background:#10B981; }
+    .pill.orange { background:rgba(245,158,11,0.12); color:#B45309; }
+    .pill.orange::before { background:#F59E0B; }
+    .pill.red { background:rgba(239,68,68,0.12); color:#B91C1C; }
+    .pill.red::before { background:#EF4444; }
+    .pill.blue { background:rgba(0,56,255,0.1); color:var(--primary-dark); }
+    .pill.blue::before { background:var(--primary); }
+    .pill.gray { background:rgba(100,116,139,0.1); color:var(--gray); }
+    .pill.gray::before { background:var(--gray); }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600; font-size: 0.875rem;
+      cursor: pointer; border: none; transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(0,56,255,0.3);
+    }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(16,185,129,0.3);
+    }
+    .btn-success:hover { background: #059669; transform: translateY(-1px); }
+    .btn-danger {
+      background: var(--error);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+    }
+    .btn-danger:hover { background: #DC2626; }
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+    }
+    .btn-outline:hover { background: rgba(0,56,255,0.06); }
+    .btn-gray {
+      background: var(--light-gray);
+      color: var(--gray);
+    }
+    .btn-gray:hover { background: #CBD5E1; }
+    .btn-sm { padding: 0.45rem 0.9rem; font-size: 0.8rem; border-radius: 8px; }
+    .btn-lg { padding: 0.85rem 1.8rem; font-size: 1rem; }
+    .btn-block { width: 100%; justify-content: center; }
+
+    /* ─── FORMS ─── */
+    .form-group { margin-bottom: 1rem; }
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gray);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.65rem 0.9rem;
+      border: 1.5px solid var(--light-gray);
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+      color: var(--dark);
+      background: #fff;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,56,255,0.1); }
+    textarea.form-control { resize: vertical; min-height: 90px; }
+
+    /* ─── TIME CLOCK ─── */
+    .clock-display {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    .clock-time {
+      font-family: 'Barlow', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--dark);
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+    .clock-date {
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-top: 0.5rem;
+    }
+    .clock-status {
+      margin-top: 1rem;
+      display: flex; align-items:center; justify-content:center; gap: 0.5rem;
+      font-size: 0.9rem; font-weight: 600;
+    }
+    .status-indicator {
+      width: 10px; height: 10px; border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    .status-indicator.clocked-in { background: var(--success); }
+    .status-indicator.clocked-out { background: var(--gray); animation: none; }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.2); }
+    }
+    .clock-actions { display:flex; gap:1rem; justify-content:center; margin-top: 1.5rem; flex-wrap: wrap; }
+    .elapsed-time {
+      background: linear-gradient(135deg, rgba(0,56,255,0.06), rgba(0,212,255,0.06));
+      border: 1px solid rgba(0,56,255,0.1);
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+    .elapsed-val { font-family:'Barlow',sans-serif; font-size:1.4rem; font-weight:700; color: var(--primary); }
+    .elapsed-label { font-size:0.72rem; color:var(--gray); font-weight:600; text-transform:uppercase; }
+
+    /* ─── PHOTO UPLOAD ─── */
+    .upload-zone {
+      border: 2px dashed var(--light-gray);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #fafcff;
+    }
+    .upload-zone:hover { border-color: var(--primary); background: rgba(0,56,255,0.03); }
+    .upload-zone.has-file { border-color: var(--success); background: rgba(16,185,129,0.03); }
+    .upload-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .upload-text { font-size: 0.85rem; color: var(--gray); }
+    .upload-text strong { color: var(--primary); }
+    .upload-preview {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+    .preview-thumb {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--light-gray);
+    }
+    .preview-thumb img { width:100%; height:100%; object-fit:cover; }
+    .preview-thumb .remove {
+      position: absolute; top:3px; right:3px;
+      background: rgba(0,0,0,0.6); color:#fff;
+      border: none; border-radius: 50%; width:18px; height:18px;
+      font-size: 10px; cursor: pointer;
+      display: flex; align-items:center; justify-content:center;
+    }
+
+    /* ─── TASK CARDS ─── */
+    .task-item {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 1rem;
+      border: 1px solid var(--light-gray);
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      transition: all 0.2s;
+      background: #fff;
+    }
+    .task-item:hover { border-color: rgba(0,56,255,0.2); box-shadow: 0 2px 12px rgba(0,56,255,0.06); }
+    .task-priority {
+      width: 4px; height: 100%;
+      min-height: 50px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      align-self: stretch;
+    }
+    .task-priority.high { background: var(--error); }
+    .task-priority.medium { background: var(--warning); }
+    .task-priority.low { background: var(--success); }
+    .task-body { flex: 1; min-width: 0; }
+    .task-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem; }
+    .task-meta { font-size: 0.78rem; color: var(--gray); display:flex; gap:1rem; flex-wrap:wrap; }
+    .task-actions { display:flex; gap:0.5rem; flex-shrink:0; }
+    .task-check {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--light-gray);
+      flex-shrink: 0;
+      cursor: pointer;
+      display:flex; align-items:center; justify-content:center;
+      transition: all 0.2s;
+      margin-top: 2px;
+    }
+    .task-check.done { background: var(--success); border-color: var(--success); color:#fff; }
+
+    /* ─── ACTIVITY LOG ─── */
+    .log-item {
+      display: flex; gap: 1rem; padding: 0.75rem 0;
+      border-bottom: 1px solid var(--light-gray);
+    }
+    .log-item:last-child { border-bottom: none; }
+    .log-time { font-size: 0.75rem; color: var(--gray); flex-shrink:0; width: 72px; padding-top: 2px; }
+    .log-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      flex-shrink: 0; margin-top: 5px;
+    }
+    .log-text { font-size: 0.85rem; flex: 1; }
+    .log-text strong { font-weight: 600; }
+
+    /* ─── CHAT ─── */
+    .chat-container {
+      display: flex; flex-direction: column; height: 420px;
+    }
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 1rem;
+      display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    .chat-bubble {
+      max-width: 80%;
+      padding: 0.65rem 0.9rem;
+      border-radius: 14px;
+      font-size: 0.875rem;
+      line-height: 1.4;
+    }
+    .chat-bubble.me {
+      background: var(--primary); color: #fff;
+      border-bottom-right-radius: 4px;
+      align-self: flex-end;
+    }
+    .chat-bubble.them {
+      background: var(--light-gray); color: var(--dark);
+      border-bottom-left-radius: 4px;
+      align-self: flex-start;
+    }
+    .chat-bubble.system {
+      background: rgba(245,158,11,0.1); color: #B45309;
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: 10px; font-size: 0.78rem;
+      align-self: center; max-width: 90%;
+    }
+    .bubble-meta { font-size: 0.68rem; opacity: 0.65; margin-top: 3px; }
+    .chat-input-row {
+      display: flex; gap: 0.5rem; padding: 1rem; border-top: 1px solid var(--light-gray);
+    }
+    .chat-input {
+      flex: 1; padding: 0.6rem 0.9rem;
+      border: 1.5px solid var(--light-gray);
+      border-radius: 24px;
+      font-family: 'Outfit', sans-serif; font-size: 0.875rem;
+      outline: none; transition: border 0.2s;
+    }
+    .chat-input:focus { border-color: var(--primary); }
+    .chat-send {
+      background: var(--primary); color:#fff;
+      border: none; border-radius: 50%;
+      width: 40px; height: 40px;
+      display: flex; align-items:center; justify-content:center;
+      cursor: pointer; transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .chat-send:hover { background: var(--primary-dark); }
+
+    /* ─── ATTENDANCE TABLE ─── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    .data-table th {
+      text-align: left; padding: 0.75rem 1rem;
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--gray);
+      border-bottom: 2px solid var(--light-gray);
+    }
+    .data-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--dark);
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: #f8faff; }
+    .table-wrap { overflow-x: auto; }
+
+    /* ─── PROGRESS BAR ─── */
+    .progress-bar {
+      height: 6px; background: var(--light-gray); border-radius: 99px; overflow: hidden;
+    }
+    .progress-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; }
+    .progress-fill.blue { background: var(--primary); }
+    .progress-fill.green { background: var(--success); }
+    .progress-fill.orange { background: var(--warning); }
+
+    /* ─── ISSUE FORM ─── */
+    .issue-category {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .issue-cat-btn {
+      border: 1.5px solid var(--light-gray);
+      border-radius: 10px; padding: 0.75rem;
+      cursor: pointer; text-align: center;
+      transition: all 0.2s; background: #fff;
+      font-family: 'Outfit', sans-serif;
+    }
+    .issue-cat-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .issue-cat-btn.selected { border-color: var(--primary); background: rgba(0,56,255,0.06); color: var(--primary); }
+    .issue-cat-icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+    .issue-cat-label { font-size: 0.78rem; font-weight: 600; }
+
+    /* ─── DAILY REPORT ─── */
+    .report-section {
+      background: linear-gradient(135deg, rgba(0,56,255,0.04), rgba(0,212,255,0.04));
+      border: 1px solid rgba(0,56,255,0.1);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+    }
+    .report-section-title {
+      font-size: 0.8rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--primary); margin-bottom: 0.6rem;
+      display: flex; align-items: center; gap: 0.4rem;
+    }
+
+    /* ─── ALERTS / NOTICES ─── */
+    .alert {
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      display: flex; align-items:flex-start; gap: 0.6rem;
+      margin-bottom: 0.75rem;
+    }
+    .alert.info { background: rgba(0,56,255,0.07); color: var(--primary-dark); border-left: 3px solid var(--primary); }
+    .alert.warning { background: rgba(245,158,11,0.1); color: #B45309; border-left: 3px solid var(--warning); }
+    .alert.success { background: rgba(16,185,129,0.1); color: #047857; border-left: 3px solid var(--success); }
+
+    /* ─── DIVIDER ─── */
+    .divider { height: 1px; background: var(--light-gray); margin: 1rem 0; }
+
+    /* ─── MODAL ─── */
+    .modal-overlay {
+      display: none; position: fixed; inset:0;
+      background: rgba(10,15,28,0.6); backdrop-filter: blur(4px);
+      z-index: 500; align-items:center; justify-content:center; padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff; border-radius: 20px;
+      padding: 1.8rem; max-width: 480px; width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal-header {
+      display: flex; align-items:center; justify-content:space-between;
+      margin-bottom: 1.2rem;
+    }
+    .modal-title { font-family:'Barlow',sans-serif; font-size:1.2rem; font-weight:800; text-transform:uppercase; }
+    .modal-close {
+      background: var(--light-gray); border:none; cursor:pointer;
+      width:32px; height:32px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-size: 1rem; color: var(--gray); transition: background 0.2s;
+    }
+    .modal-close:hover { background: #CBD5E1; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.mobile-open { transform: translateX(0); }
+      .main { margin-left: 0; padding: 1rem; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .clock-time { font-size: 2.8rem; }
+      .topbar { padding: 0 1rem; }
+      .emp-info { display: none; }
+    }
+    @media (max-width: 480px) {
+      .clock-actions { flex-direction: column; }
+      .clock-actions .btn { width: 100%; justify-content: center; }
+      .task-actions { flex-direction: column; }
+      .chat-container { height: 350px; }
+    }
+    @media (min-width: 769px) {
+      .menu-btn { display: flex; }
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 99px; }
+
+    /* ─── TOAST ─── */
+    .toast-container {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      display: flex; flex-direction: column; gap: 0.5rem;
+    }
+    .toast {
+      background: var(--dark); color: #fff;
+      padding: 0.8rem 1.2rem; border-radius: 12px;
+      font-size: 0.85rem; font-weight: 500;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      display: flex; align-items:center; gap: 0.6rem;
+      animation: fadeInUp 0.3s ease;
+      max-width: 300px;
+    }
+    .toast.success { background: var(--success); }
+    .toast.error { background: var(--error); }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* toggle for clock in */
+    .clock-btn-group { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .photo-upload-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* summary row */
+    .summary-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.6rem 0; border-bottom: 1px solid #f1f5f9;
+      font-size: 0.875rem;
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-label { color: var(--gray); font-weight: 500; }
+    .summary-val { font-weight: 600; }
+
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <div class="brand">
+      Dream<span>Works</span>
+      <sub>HVAC Services</sub>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="notif-btn" onclick="showToast('2 new task assignments','info')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <span class="notif-dot"></span>
+    </button>
+    <div class="emp-badge">
+      <div class="avatar">JD</div>
+      <div class="emp-info">
+        <div class="emp-name">Juan Dela Cruz</div>
+        <div class="emp-role">HVAC Technician</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-section">Main</div>
+  <button class="nav-item active" onclick="showPage('dashboard',this)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </button>
+  <button class="nav-item" onclick="showPage('timeclock',this)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Time Clock
+    <span class="badge green" id="clockStatusBadge">OUT</span>
+  </button>
+  <button class="nav-item" onclick="showPage('tasks',this)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    My Tasks
+    <span class="badge orange">4</span>
+  </button>
+  <button class="nav-item" onclick="showPage('dailyreport',this)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    Daily Report
+  </button>
+  <button class="nav-item" onclick="showPage('photos',this)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    Photo Uploads
+  </button>
+  <button class="nav-item" onclick="showPage('attendance',this)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Attendance Log
+  </button>
+
+  <div class="sidebar-section">Communication</div>
+  <button class="nav-item" onclick="showPage('chat',this)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Team Chat
+    <span class="badge">3</span>
+  </button>
+  <button class="nav-item" onclick="showPage('issues',this)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Report Issue
+  </button>
+
+  <div class="sidebar-section">Admin Submissions</div>
+  <button class="nav-item" onclick="showPage('submissions',this)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    Submit to Admin
+  </button>
+
+  <div class="sidebar-footer">
+    <button class="logout-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main" id="main">
+
+  <!-- ══════════ DASHBOARD ══════════ -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-header">
+      <div class="page-title">Good Morning, Juan! 👋</div>
+      <div class="page-sub">Tuesday, July 15, 2025 · Here's your day at a glance</div>
+    </div>
+
+    <div class="alert info">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>You have <strong>4 tasks</strong> assigned for today. Don't forget to clock in!</span>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:1rem;">
+      <div class="stat-card">
+        <div class="stat-icon blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <div class="stat-val">0h 0m</div>
+          <div class="stat-label">Hours Today</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div>
+          <div class="stat-val">4</div>
+          <div class="stat-label">Tasks Pending</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div>
+          <div class="stat-val">2</div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon cyan">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <div class="stat-val">22</div>
+          <div class="stat-label">Days Present</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Quick clock in -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> Quick Clock-In</div>
+        <div style="text-align:center; padding: 1rem 0;">
+          <div style="font-size:2.5rem; font-family:'Barlow',sans-serif; font-weight:800;" id="dashClock">--:--:--</div>
+          <div style="font-size:0.8rem; color:var(--gray); margin-top:4px;" id="dashDate">Loading...</div>
+          <div style="margin-top:1rem; display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn-success" onclick="handleClockIn()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Clock In
+            </button>
+            <button class="btn btn-outline btn-sm" onclick="showPage('timeclock', document.querySelector('[onclick*=timeclock]'))">Full Clock →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's tasks quick -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> Today's Tasks</div>
+        <div class="task-item" style="padding:0.75rem;">
+          <div class="task-priority high"></div>
+          <div class="task-body">
+            <div class="task-title" style="font-size:0.85rem;">AC Unit Repair - Brgy. Kapasigan</div>
+            <div class="task-meta">🕐 9:00 AM · High Priority</div>
+          </div>
+          <span class="pill orange">Pending</span>
+        </div>
+        <div class="task-item" style="padding:0.75rem;">
+          <div class="task-priority medium"></div>
+          <div class="task-body">
+            <div class="task-title" style="font-size:0.85rem;">Preventive Maintenance - SM Pasig</div>
+            <div class="task-meta">🕐 1:00 PM · Medium Priority</div>
+          </div>
+          <span class="pill orange">Pending</span>
+        </div>
+        <button class="btn btn-outline btn-sm btn-block" style="margin-top:0.75rem;" onclick="showPage('tasks', document.querySelector('[onclick*=tasks]'))">View All Tasks →</button>
+      </div>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="card" style="margin-top:1rem;">
+      <div class="card-title"><span class="dot"></span> Today's Activity Log</div>
+      <div id="activityLog">
+        <div class="log-item">
+          <div class="log-time">8:00 AM</div>
+          <div class="log-dot" style="background:var(--gray)"></div>
+          <div class="log-text">Waiting for clock-in...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ TIME CLOCK ══════════ -->
+  <div class="page" id="page-timeclock">
+    <div class="page-header">
+      <div class="page-title">Time Clock</div>
+      <div class="page-sub">Daily check-in & check-out with photo verification</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> Clock In / Out</div>
+        <div class="clock-display">
+          <div class="clock-time" id="mainClock">--:--:--</div>
+          <div class="clock-date" id="mainDate">Loading...</div>
+          <div class="clock-status" id="clockStatus">
+            <span class="status-indicator clocked-out" id="clockIndicator"></span>
+            <span id="clockStatusText">Not Clocked In</span>
+          </div>
+          <div class="elapsed-time" id="elapsedBox" style="display:none;">
+            <div class="elapsed-val" id="elapsedVal">0h 0m</div>
+            <div class="elapsed-label">Time Elapsed</div>
+          </div>
+        </div>
+        <div class="clock-btn-group">
+          <button class="btn btn-success btn-lg" id="clockInBtn" onclick="clockIn()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Clock In
+          </button>
+          <button class="btn btn-danger btn-lg" id="clockOutBtn" onclick="clockOut()" disabled style="opacity:0.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            Clock Out
+          </button>
+        </div>
+        <div style="text-align:center; margin-top:1rem; font-size:0.78rem; color:var(--gray);">
+          📍 Location will be captured automatically on check-in
+        </div>
+      </div>
+
+      <!-- Today's time summary -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> Today's Summary</div>
+        <div class="summary-row">
+          <span class="summary-label">Date</span>
+          <span class="summary-val" id="summaryDate">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Clock In</span>
+          <span class="summary-val" id="summaryIn">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Clock Out</span>
+          <span class="summary-val" id="summaryOut">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Total Hours</span>
+          <span class="summary-val" id="summaryHours">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Status</span>
+          <span class="summary-val"><span class="pill gray" id="summaryStatus">Not Started</span></span>
+        </div>
+        <div class="divider"></div>
+        <div class="card-title" style="font-size:0.85rem;"><span class="dot"></span> Weekly Progress</div>
+        <div style="margin-bottom:0.4rem; display:flex; justify-content:space-between; font-size:0.78rem; color:var(--gray);">
+          <span>This Week</span><span>26/40 hrs</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill blue" style="width:65%"></div></div>
+      </div>
+    </div>
+
+    <!-- PHOTO UPLOAD FOR CLOCK -->
+    <div class="card" style="margin-top:1rem;">
+      <div class="card-title"><span class="dot"></span> Required Photo Verification</div>
+      <div class="alert warning">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Photos are required before clocking in/out. These will be submitted to your supervisor.
+      </div>
+      <div class="photo-upload-pair">
+        <div>
+          <label class="form-label">📸 Clock-In Photo (Before Work)</label>
+          <div class="upload-zone" id="clockInZone" onclick="triggerUpload('clockInFile')">
+            <div class="upload-icon">🤳</div>
+            <div class="upload-text"><strong>Tap to upload</strong> or take photo<br>Selfie at job site required</div>
+            <div class="upload-preview" id="clockInPreview"></div>
+          </div>
+          <input type="file" id="clockInFile" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(this,'clockInPreview','clockInZone')">
+        </div>
+        <div>
+          <label class="form-label">📸 Clock-Out Photo (After Work)</label>
+          <div class="upload-zone" id="clockOutZone" onclick="triggerUpload('clockOutFile')">
+            <div class="upload-icon">📷</div>
+            <div class="upload-text"><strong>Tap to upload</strong> or take photo<br>Job completion photo required</div>
+            <div class="upload-preview" id="clockOutPreview"></div>
+          </div>
+          <input type="file" id="clockOutFile" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(this,'clockOutPreview','clockOutZone')">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ TASKS ══════════ -->
+  <div class="page" id="page-tasks">
+    <div class="page-header">
+      <div class="page-title">My Tasks</div>
+      <div class="page-sub">Activities assigned by your supervisor</div>
+    </div>
+
+    <div class="grid-3" style="margin-bottom:1rem;">
+      <div class="stat-card">
+        <div class="stat-icon orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><div class="stat-val">4</div><div class="stat-label">Pending</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+        <div><div class="stat-val">2</div><div class="stat-label">In Progress</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div><div class="stat-val">8</div><div class="stat-label">Completed</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> Today's Assignments</div>
+
+      <div class="task-item" id="task1">
+        <div class="task-check" id="chk1" onclick="toggleTask('chk1','task1')"></div>
+        <div class="task-priority high"></div>
+        <div class="task-body">
+          <div class="task-title">AC Unit Repair — Brgy. Kapasigan, Pasig</div>
+          <div class="task-meta">
+            <span>🕐 9:00 AM</span>
+            <span>📍 Unit 3B, Kapasigan</span>
+            <span>👤 Client: Maria Santos</span>
+          </div>
+          <div style="margin-top:0.5rem; font-size:0.8rem; color:var(--gray);">Inverter split-type AC unit not cooling. Check refrigerant and compressor.</div>
+        </div>
+        <div class="task-actions">
+          <span class="pill red">High</span>
+          <button class="btn btn-primary btn-sm" onclick="openTaskDetail()">Details</button>
+        </div>
+      </div>
+
+      <div class="task-item" id="task2">
+        <div class="task-check" id="chk2" onclick="toggleTask('chk2','task2')"></div>
+        <div class="task-priority medium"></div>
+        <div class="task-body">
+          <div class="task-title">Preventive Maintenance — SM Pasig Branch</div>
+          <div class="task-meta">
+            <span>🕐 1:00 PM</span>
+            <span>📍 SM City Pasig</span>
+            <span>👤 Contact: Engr. Reyes</span>
+          </div>
+          <div style="margin-top:0.5rem; font-size:0.8rem; color:var(--gray);">Quarterly PM for 5 AHU units. Bring filter replacements.</div>
+        </div>
+        <div class="task-actions">
+          <span class="pill orange">Med</span>
+          <button class="btn btn-primary btn-sm" onclick="openTaskDetail()">Details</button>
+        </div>
+      </div>
+
+      <div class="task-item" id="task3">
+        <div class="task-check" id="chk3" onclick="toggleTask('chk3','task3')"></div>
+        <div class="task-priority low"></div>
+        <div class="task-body">
+          <div class="task-title">New Installation — Rosario St., Pasig</div>
+          <div class="task-meta">
+            <span>🕐 3:30 PM</span>
+            <span>📍 Rosario, Pasig City</span>
+            <span>👤 Client: Reyes Family</span>
+          </div>
+          <div style="margin-top:0.5rem; font-size:0.8rem; color:var(--gray);">Install 1.5HP window-type AC unit in master bedroom.</div>
+        </div>
+        <div class="task-actions">
+          <span class="pill green">Low</span>
+          <button class="btn btn-primary btn-sm" onclick="openTaskDetail()">Details</button>
+        </div>
+      </div>
+
+      <div class="task-item" id="task4">
+        <div class="task-check" id="chk4" onclick="toggleTask('chk4','task4')"></div>
+        <div class="task-priority medium"></div>
+        <div class="task-body">
+          <div class="task-title">Emergency Call — Ortigas Business District</div>
+          <div class="task-meta">
+            <span>🕐 On-Call</span>
+            <span>📍 Ortigas, Pasig</span>
+            <span>👤 Contact: TBD</span>
+          </div>
+          <div style="margin-top:0.5rem; font-size:0.8rem; color:var(--gray);">Stand-by for emergency chiller breakdown response.</div>
+        </div>
+        <div class="task-actions">
+          <span class="pill orange">Med</span>
+          <button class="btn btn-primary btn-sm" onclick="openTaskDetail()">Details</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task Notes Upload -->
+    <div class="card" style="margin-top:1rem;">
+      <div class="card-title"><span class="dot"></span> Task Completion Notes</div>
+      <div class="form-group">
+        <label class="form-label">Select Task</label>
+        <select class="form-control">
+          <option>AC Unit Repair — Kapasigan</option>
+          <option>Preventive Maintenance — SM Pasig</option>
+          <option>New Installation — Rosario St.</option>
+          <option>Emergency Call — Ortigas</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Work Done / Remarks</label>
+        <textarea class="form-control" placeholder="Describe what was done, materials used, findings..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Attach Completion Photos</label>
+        <div class="upload-zone" onclick="triggerUpload('taskPhotoFile')">
+          <div class="upload-icon">📎</div>
+          <div class="upload-text"><strong>Upload photos</strong> of completed work</div>
+          <div class="upload-preview" id="taskPhotoPreview"></div>
+        </div>
+        <input type="file" id="taskPhotoFile" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this,'taskPhotoPreview','')">
+      </div>
+      <button class="btn btn-primary" onclick="showToast('Task notes submitted to supervisor ✓','success')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Submit Notes
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════ DAILY REPORT ══════════ -->
+  <div class="page" id="page-dailyreport">
+    <div class="page-header">
+      <div class="page-title">Daily Report</div>
+      <div class="page-sub">Submit your end-of-day report to admin</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> End of Day Report</div>
+      <div class="alert info">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        This report is submitted directly to your supervisor and admin. Fill out completely.
+      </div>
+
+      <div class="report-section">
+        <div class="report-section-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Work Summary
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-control" id="reportDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Jobs Completed Today</label>
+          <textarea class="form-control" placeholder="List all jobs, locations, and what was done..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Materials / Parts Used</label>
+          <textarea class="form-control" placeholder="List parts, quantities, and job reference..."></textarea>
+        </div>
+      </div>
+
+      <div class="report-section">
+        <div class="report-section-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Safety & Issues
+        </div>
+        <div class="form-group">
+          <label class="form-label">Any Safety Issues?</label>
+          <select class="form-control">
+            <option value="">— Select —</option>
+            <option>No issues encountered</option>
+            <option>Minor incident (no injury)</option>
+            <option>Equipment problem</option>
+            <option>Client complaint</option>
+            <option>Hazardous condition found</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Details / Notes</label>
+          <textarea class="form-control" placeholder="Describe any issues, incidents, or important observations..."></textarea>
+        </div>
+      </div>
+
+      <div class="report-section">
+        <div class="report-section-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Proof of Work Photos
+        </div>
+        <div class="grid-2">
+          <div>
+            <label class="form-label">Before Photos</label>
+            <div class="upload-zone" onclick="triggerUpload('beforeFile')">
+              <div class="upload-icon">📷</div>
+              <div class="upload-text"><strong>Upload</strong> before-work photos</div>
+              <div class="upload-preview" id="beforePreview"></div>
+            </div>
+            <input type="file" id="beforeFile" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this,'beforePreview','')">
+          </div>
+          <div>
+            <label class="form-label">After Photos</label>
+            <div class="upload-zone" onclick="triggerUpload('afterFile')">
+              <div class="upload-icon">✅</div>
+              <div class="upload-text"><strong>Upload</strong> after-work photos</div>
+              <div class="upload-preview" id="afterPreview"></div>
+            </div>
+            <input type="file" id="afterFile" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this,'afterPreview','')">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Overall Status</label>
+        <select class="form-control">
+          <option>All tasks completed</option>
+          <option>Partially completed — follow-up needed</option>
+          <option>Incomplete — explain in notes</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="showToast('Daily report submitted to admin ✓','success')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+          Submit Report
+        </button>
+        <button class="btn btn-gray" onclick="showToast('Draft saved','info')">Save Draft</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PHOTO UPLOADS ══════════ -->
+  <div class="page" id="page-photos">
+    <div class="page-header">
+      <div class="page-title">Photo Uploads</div>
+      <div class="page-sub">Upload job site photos for admin review</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> Before Work Photos</div>
+        <div class="form-group">
+          <label class="form-label">Job / Task Reference</label>
+          <select class="form-control">
+            <option>AC Unit Repair — Kapasigan</option>
+            <option>PM — SM Pasig</option>
+            <option>Installation — Rosario St.</option>
+          </select>
+        </div>
+        <div class="upload-zone" onclick="triggerUpload('beforeWorkFile')">
+          <div class="upload-icon">📷</div>
+          <div class="upload-text"><strong>Upload before-work photos</strong><br>Take photos of the unit/site before starting</div>
+          <div class="upload-preview" id="beforeWorkPreview"></div>
+        </div>
+        <input type="file" id="beforeWorkFile" accept="image/*" multiple capture="environment" style="display:none" onchange="handlePhotoUpload(this,'beforeWorkPreview','')">
+        <button class="btn btn-primary btn-block" style="margin-top:0.75rem;" onclick="showToast('Before photos uploaded ✓','success')">Upload to Admin</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> After Work Photos</div>
+        <div class="form-group">
+          <label class="form-label">Job / Task Reference</label>
+          <select class="form-control">
+            <option>AC Unit Repair — Kapasigan</option>
+            <option>PM — SM Pasig</option>
+            <option>Installation — Rosario St.</option>
+          </select>
+        </div>
+        <div class="upload-zone" onclick="triggerUpload('afterWorkFile')">
+          <div class="upload-icon">✅</div>
+          <div class="upload-text"><strong>Upload after-work photos</strong><br>Document completed job and clean worksite</div>
+          <div class="upload-preview" id="afterWorkPreview"></div>
+        </div>
+        <input type="file" id="afterWorkFile" accept="image/*" multiple capture="environment" style="display:none" onchange="handlePhotoUpload(this,'afterWorkPreview','')">
+        <button class="btn btn-success btn-block" style="margin-top:0.75rem;" onclick="showToast('After photos uploaded ✓','success')">Upload to Admin</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1rem;">
+      <div class="card-title"><span class="dot"></span> Other Required Uploads</div>
+      <div class="grid-2">
+        <div>
+          <label class="form-label">🪪 Daily ID / Selfie Verification</label>
+          <div class="upload-zone" onclick="triggerUpload('selfieFile')">
+            <div class="upload-icon">🤳</div>
+            <div class="upload-text"><strong>Selfie with ID</strong> required daily</div>
+            <div class="upload-preview" id="selfiePreview"></div>
+          </div>
+          <input type="file" id="selfieFile" accept="image/*" capture="user" style="display:none" onchange="handlePhotoUpload(this,'selfiePreview','selfieFile')">
+        </div>
+        <div>
+          <label class="form-label">🧾 Client Signature / Service Receipt</label>
+          <div class="upload-zone" onclick="triggerUpload('receiptFile')">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text"><strong>Upload photo</strong> of signed service receipt</div>
+            <div class="upload-preview" id="receiptPreview"></div>
+          </div>
+          <input type="file" id="receiptFile" accept="image/*" style="display:none" onchange="handlePhotoUpload(this,'receiptPreview','')">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ ATTENDANCE LOG ══════════ -->
+  <div class="page" id="page-attendance">
+    <div class="page-header">
+      <div class="page-title">Attendance Log</div>
+      <div class="page-sub">Your personal attendance history</div>
+    </div>
+
+    <div class="grid-3" style="margin-bottom:1rem;">
+      <div class="stat-card">
+        <div class="stat-icon green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div><div class="stat-val">22</div><div class="stat-label">Present Days</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <div><div class="stat-val">1</div><div class="stat-label">Late Days</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><div class="stat-val">176h</div><div class="stat-label">Total Hours</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot"></span> July 2025 Attendance</div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Day</th>
+              <th>Time In</th>
+              <th>Time Out</th>
+              <th>Hours</th>
+              <th>Status</th>
+              <th>Photos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Jul 14</td><td>Mon</td><td>7:58 AM</td><td>5:02 PM</td><td>9h 04m</td><td><span class="pill green">Present</span></td><td><button class="btn btn-gray btn-sm">View</button></td></tr>
+            <tr><td>Jul 13</td><td>Sun</td><td>—</td><td>—</td><td>—</td><td><span class="pill gray">Rest Day</span></td><td>—</td></tr>
+            <tr><td>Jul 12</td><td>Sat</td><td>8:05 AM</td><td>4:58 PM</td><td>8h 53m</td><td><span class="pill green">Present</span></td><td><button class="btn btn-gray btn-sm">View</button></td></tr>
+            <tr><td>Jul 11</td><td>Fri</td><td>8:32 AM</td><td>5:15 PM</td><td>8h 43m</td><td><span class="pill orange">Late</span></td><td><button class="btn btn-gray btn-sm">View</button></td></tr>
+            <tr><td>Jul 10</td><td>Thu</td><td>7:55 AM</td><td>5:00 PM</td><td>9h 05m</td><td><span class="pill green">Present</span></td><td><button class="btn btn-gray btn-sm">View</button></td></tr>
+            <tr><td>Jul 9</td><td>Wed</td><td>8:00 AM</td><td>5:05 PM</td><td>9h 05m</td><td><span class="pill green">Present</span></td><td><button class="btn btn-gray btn-sm">View</button></td></tr>
+            <tr><td>Jul 8</td><td>Tue</td><td>7:48 AM</td><td>4:50 PM</td><td>9h 02m</td><td><span class="pill green">Present</span></td><td><button class="btn btn-gray btn-sm">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ CHAT ══════════ -->
+  <div class="page" id="page-chat">
+    <div class="page-header">
+      <div class="page-title">Team Chat</div>
+      <div class="page-sub">Real-time communication with your team and supervisor</div>
+    </div>
+
+    <div class="grid-2" style="align-items:start;">
+      <div class="card" style="padding:0; overflow:hidden;">
+        <div style="padding:1rem; border-bottom:1px solid var(--light-gray);">
+          <div class="card-title" style="margin:0;"><span class="dot"></span> General — HVAC Team</div>
+        </div>
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-bubble system">📢 Reminder: Submit daily reports by 6:00 PM — Admin</div>
+            <div class="chat-bubble them">
+              Good morning team! Anyone near Ortigas area for the emergency call?
+              <div class="bubble-meta">Supervisor · 7:45 AM</div>
+            </div>
+            <div class="chat-bubble me">
+              Good morning! I can head there after my 1PM job at SM Pasig.
+              <div class="bubble-meta">You · 7:52 AM</div>
+            </div>
+            <div class="chat-bubble them">
+              Perfect, thanks Juan! Standby around 3PM.
+              <div class="bubble-meta">Supervisor · 7:55 AM</div>
+            </div>
+            <div class="chat-bubble them">
+              All techs: Please make sure to upload before/after photos for each job today.
+              <div class="bubble-meta">Admin · 8:00 AM</div>
+            </div>
+          </div>
+          <div class="chat-input-row">
+            <input class="chat-input" id="chatInput" type="text" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendChat()">
+            <button class="chat-send" onclick="sendChat()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Direct messages -->
+      <div class="flex-col">
+        <div class="card" style="padding:0; overflow:hidden;">
+          <div style="padding:1rem; border-bottom:1px solid var(--light-gray);">
+            <div class="card-title" style="margin:0;"><span class="dot"></span> Direct — Supervisor</div>
+          </div>
+          <div class="chat-container" style="height:240px;">
+            <div class="chat-messages">
+              <div class="chat-bubble them">
+                Juan, your report for yesterday was good. Keep it up!
+                <div class="bubble-meta">Supervisor · Yesterday 6:10 PM</div>
+              </div>
+              <div class="chat-bubble me">
+                Thank you, Sir! Will do.
+                <div class="bubble-meta">You · Yesterday 6:12 PM</div>
+              </div>
+            </div>
+            <div class="chat-input-row">
+              <input class="chat-input" id="dmInput" type="text" placeholder="Message supervisor...">
+              <button class="chat-send" onclick="showToast('Message sent to supervisor','success')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="dot"></span> Quick Comments on Tasks</div>
+          <select class="form-control" style="margin-bottom:0.75rem;">
+            <option>AC Unit Repair — Kapasigan</option>
+            <option>PM — SM Pasig</option>
+            <option>Installation — Rosario</option>
+          </select>
+          <textarea class="form-control" placeholder="Add a comment or update on this task..." style="min-height:70px;"></textarea>
+          <button class="btn btn-primary btn-sm" style="margin-top:0.75rem;" onclick="showToast('Comment posted ✓','success')">Post Comment</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ REPORT ISSUE ══════════ -->
+  <div class="page" id="page-issues">
+    <div class="page-header">
+      <div class="page-title">Report an Issue</div>
+      <div class="page-sub">Contact admin or report a problem</div>
+    </div>
+
+    <div class="grid-2" style="align-items:start;">
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> Submit Issue / Request</div>
+
+        <div class="form-group">
+          <label class="form-label">Issue Category</label>
+          <div class="issue-category">
+            <div class="issue-cat-btn selected" onclick="selectCat(this)">
+              <div class="issue-cat-icon">🔧</div>
+              <div class="issue-cat-label">Equipment</div>
+            </div>
+            <div class="issue-cat-btn" onclick="selectCat(this)">
+              <div class="issue-cat-icon">🚗</div>
+              <div class="issue-cat-label">Vehicle</div>
+            </div>
+            <div class="issue-cat-btn" onclick="selectCat(this)">
+              <div class="issue-cat-icon">🦺</div>
+              <div class="issue-cat-label">Safety</div>
+            </div>
+            <div class="issue-cat-btn" onclick="selectCat(this)">
+              <div class="issue-cat-icon">👤</div>
+              <div class="issue-cat-label">HR / Payroll</div>
+            </div>
+            <div class="issue-cat-btn" onclick="selectCat(this)">
+              <div class="issue-cat-icon">📋</div>
+              <div class="issue-cat-label">Schedule</div>
+            </div>
+            <div class="issue-cat-btn" onclick="selectCat(this)">
+              <div class="issue-cat-icon">💬</div>
+              <div class="issue-cat-label">Other</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Priority Level</label>
+          <select class="form-control">
+            <option>🔴 Urgent — Needs immediate attention</option>
+            <option>🟡 Normal — Can wait until tomorrow</option>
+            <option>🟢 Low — General inquiry</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          <input type="text" class="form-control" placeholder="Brief description of the issue...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Full Details</label>
+          <textarea class="form-control" placeholder="Describe the issue in detail. Include any relevant information..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Attach Photo (optional)</label>
+          <div class="upload-zone" onclick="triggerUpload('issuePhotoFile')">
+            <div class="upload-icon">📎</div>
+            <div class="upload-text"><strong>Attach photo</strong> of the issue if applicable</div>
+            <div class="upload-preview" id="issuePhotoPreview"></div>
+          </div>
+          <input type="file" id="issuePhotoFile" accept="image/*" style="display:none" onchange="handlePhotoUpload(this,'issuePhotoPreview','')">
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="showToast('Issue submitted to admin ✓','success')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Submit Issue
+        </button>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="flex-col">
+        <div class="card">
+          <div class="card-title"><span class="dot"></span> Emergency Contacts</div>
+          <div style="display:flex; flex-direction:column; gap:0.75rem;">
+            <div style="display:flex; align-items:center; gap:1rem; padding:0.75rem; background:rgba(0,56,255,0.05); border-radius:10px; border:1px solid rgba(0,56,255,0.1);">
+              <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.85rem;">RS</div>
+              <div>
+                <div style="font-weight:600;font-size:0.9rem;">Ramon Santos</div>
+                <div style="font-size:0.75rem;color:var(--gray);">Operations Supervisor</div>
+                <div style="font-size:0.78rem;color:var(--primary);margin-top:2px;">📞 +639 275 105 794</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:1rem; padding:0.75rem; background:rgba(16,185,129,0.05); border-radius:10px; border:1px solid rgba(16,185,129,0.1);">
+              <div style="width:40px;height:40px;border-radius:50%;background:var(--success);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.85rem;">MD</div>
+              <div>
+                <div style="font-weight:600;font-size:0.9rem;">Maria Domingo</div>
+                <div style="font-size:0.75rem;color:var(--gray);">HR / Admin</div>
+                <div style="font-size:0.78rem;color:var(--success);margin-top:2px;">📞 +639 275 105 795</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:1rem; padding:0.75rem; background:rgba(245,158,11,0.05); border-radius:10px; border:1px solid rgba(245,158,11,0.1);">
+              <div style="width:40px;height:40px;border-radius:50%;background:var(--warning);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.85rem;">DW</div>
+              <div>
+                <div style="font-weight:600;font-size:0.9rem;">DreamWorks HVAC</div>
+                <div style="font-size:0.75rem;color:var(--gray);">Main Office — Pasig City</div>
+                <div style="font-size:0.78rem;color:var(--warning);margin-top:2px;">📞 +639 275 105 794</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="dot"></span> My Open Issues</div>
+          <div style="font-size:0.85rem; color:var(--gray); text-align:center; padding:1rem 0;">
+            No open issues at the moment. ✅
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ SUBMIT TO ADMIN ══════════ -->
+  <div class="page" id="page-submissions">
+    <div class="page-header">
+      <div class="page-title">Submit to Admin</div>
+      <div class="page-sub">All required employee submissions in one place</div>
+    </div>
+
+    <div class="alert success">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      <span>These submissions go directly to admin for review. Keep records up to date.</span>
+    </div>
+
+    <div class="grid-2">
+      <!-- Leave Request -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> 📅 Leave / Absence Request</div>
+        <div class="form-group">
+          <label class="form-label">Leave Type</label>
+          <select class="form-control">
+            <option>Sick Leave</option>
+            <option>Vacation Leave</option>
+            <option>Emergency Leave</option>
+            <option>Half-Day</option>
+          </select>
+        </div>
+        <div class="grid-2" style="gap:0.5rem;">
+          <div class="form-group">
+            <label class="form-label">From Date</label>
+            <input type="date" class="form-control">
+          </div>
+          <div class="form-group">
+            <label class="form-label">To Date</label>
+            <input type="date" class="form-control">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Reason</label>
+          <textarea class="form-control" placeholder="Reason for leave..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="showToast('Leave request submitted ✓','success')">Submit Request</button>
+      </div>
+
+      <!-- Overtime / Expense -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> ⏰ Overtime / Expense Claim</div>
+        <div class="form-group">
+          <label class="form-label">Type</label>
+          <select class="form-control">
+            <option>Overtime Request</option>
+            <option>Expense Reimbursement</option>
+            <option>Transportation Allowance</option>
+            <option>Tool / Parts Purchase</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-control">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Amount (PHP)</label>
+          <input type="number" class="form-control" placeholder="0.00">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Attach Receipt / Proof</label>
+          <div class="upload-zone" onclick="triggerUpload('receiptUploadFile')">
+            <div class="upload-icon">🧾</div>
+            <div class="upload-text"><strong>Upload receipt</strong></div>
+            <div class="upload-preview" id="receiptUploadPreview"></div>
+          </div>
+          <input type="file" id="receiptUploadFile" accept="image/*" style="display:none" onchange="handlePhotoUpload(this,'receiptUploadPreview','')">
+        </div>
+        <button class="btn btn-primary" onclick="showToast('Claim submitted ✓','success')">Submit Claim</button>
+      </div>
+
+      <!-- Tools / Inventory -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> 🔧 Tools & Parts Request</div>
+        <div class="form-group">
+          <label class="form-label">Items Needed</label>
+          <textarea class="form-control" placeholder="List tools or parts with quantity (e.g., Freon R-410A x2, filter kit x1)..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Urgency</label>
+          <select class="form-control">
+            <option>Needed Today</option>
+            <option>By Tomorrow</option>
+            <option>This Week</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">For Job/Task</label>
+          <input type="text" class="form-control" placeholder="Which job is this for?">
+        </div>
+        <button class="btn btn-outline" onclick="showToast('Parts request sent to admin ✓','success')">Send Request</button>
+      </div>
+
+      <!-- Personal Document -->
+      <div class="card">
+        <div class="card-title"><span class="dot"></span> 📄 Document Submission</div>
+        <div class="form-group">
+          <label class="form-label">Document Type</label>
+          <select class="form-control">
+            <option>Medical Certificate</option>
+            <option>Government ID Update</option>
+            <option>SSS / PhilHealth / Pag-IBIG</option>
+            <option>Training Certificate</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes / Description</label>
+          <textarea class="form-control" placeholder="Any notes about this document..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Upload Document</label>
+          <div class="upload-zone" onclick="triggerUpload('docFile')">
+            <div class="upload-icon">📤</div>
+            <div class="upload-text"><strong>Upload file</strong> (image or PDF)</div>
+            <div class="upload-preview" id="docPreview"></div>
+          </div>
+          <input type="file" id="docFile" accept="image/*,.pdf" style="display:none" onchange="handlePhotoUpload(this,'docPreview','')">
+        </div>
+        <button class="btn btn-primary" onclick="showToast('Document submitted to admin ✓','success')">Submit Document</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- TASK DETAIL MODAL -->
+<div class="modal-overlay" id="taskModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Task Details</div>
+      <button class="modal-close" onclick="closeModal('taskModal')">✕</button>
+    </div>
+    <div>
+      <div class="report-section">
+        <div class="report-section-title">📍 Job Information</div>
+        <div class="summary-row"><span class="summary-label">Job</span><span class="summary-val">AC Unit Repair</span></div>
+        <div class="summary-row"><span class="summary-label">Location</span><span class="summary-val">Brgy. Kapasigan, Pasig</span></div>
+        <div class="summary-row"><span class="summary-label">Client</span><span class="summary-val">Maria Santos</span></div>
+        <div class="summary-row"><span class="summary-label">Contact</span><span class="summary-val">+639 9X XXXX XXX</span></div>
+        <div class="summary-row"><span class="summary-label">Schedule</span><span class="summary-val">9:00 AM Today</span></div>
+        <div class="summary-row"><span class="summary-label">Priority</span><span class="summary-val"><span class="pill red">High</span></span></div>
+      </div>
+      <div class="report-section">
+        <div class="report-section-title">🔧 Work Instructions</div>
+        <p style="font-size:0.85rem; color:var(--gray); line-height:1.6;">Inverter split-type AC unit not cooling. Inspect refrigerant levels, check compressor operation, clean filters, and test thermostat. Report findings before proceeding with any part replacement.</p>
+      </div>
+      <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">
+        <button class="btn btn-primary" onclick="closeModal('taskModal'); showToast('Task marked as In Progress','info')">Start Task</button>
+        <button class="btn btn-gray" onclick="closeModal('taskModal')">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+  // ─── CLOCK ───
+  let clockedIn = false;
+  let clockInTime = null;
+  let elapsedInterval = null;
+
+  function updateClocks() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-PH', { hour12: true });
+    const dateStr = now.toLocaleDateString('en-PH', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    const shortDate = now.toLocaleDateString('en-PH', { month:'short', day:'numeric', year:'numeric' });
+
+    const mc = document.getElementById('mainClock');
+    const md = document.getElementById('mainDate');
+    const dc = document.getElementById('dashClock');
+    const dd = document.getElementById('dashDate');
+    const sd = document.getElementById('summaryDate');
+
+    if(mc) mc.textContent = timeStr;
+    if(md) md.textContent = dateStr;
+    if(dc) dc.textContent = timeStr;
+    if(dd) dd.textContent = dateStr;
+    if(sd && !clockedIn) sd.textContent = shortDate;
+  }
+  setInterval(updateClocks, 1000);
+  updateClocks();
+
+  function clockIn() {
+    clockedIn = true;
+    clockInTime = new Date();
+    const timeStr = clockInTime.toLocaleTimeString('en-PH', { hour12: true });
+
+    document.getElementById('clockInBtn').disabled = true;
+    document.getElementById('clockInBtn').style.opacity = '0.5';
+    document.getElementById('clockOutBtn').disabled = false;
+    document.getElementById('clockOutBtn').style.opacity = '1';
+
+    document.getElementById('clockIndicator').className = 'status-indicator clocked-in';
+    document.getElementById('clockStatusText').textContent = 'Clocked In — Working';
+    document.getElementById('clockStatusBadge').textContent = 'IN';
+    document.getElementById('clockStatusBadge').className = 'badge green';
+
+    document.getElementById('summaryIn').textContent = timeStr;
+    document.getElementById('summaryStatus').textContent = 'Working';
+    document.getElementById('summaryStatus').className = 'pill green';
+
+    document.getElementById('elapsedBox').style.display = 'block';
+
+    elapsedInterval = setInterval(() => {
+      const diff = new Date() - clockInTime;
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      document.getElementById('elapsedVal').textContent = `${h}h ${m}m`;
+
+      // Update dashboard stat
+      const dashStat = document.querySelector('.stat-val');
+      if(dashStat) dashStat.textContent = `${h}h ${m}m`;
+    }, 60000);
+
+    // Add log entry
+    addLog(timeStr, 'var(--success)', `<strong>Clocked In</strong> at ${timeStr}`);
+    showToast('Clock-in recorded ✓', 'success');
+  }
+
+  function clockOut() {
+    clockedIn = false;
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-PH', { hour12: true });
+    const diff = now - clockInTime;
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+
+    clearInterval(elapsedInterval);
+
+    document.getElementById('clockOutBtn').disabled = true;
+    document.getElementById('clockOutBtn').style.opacity = '0.5';
+    document.getElementById('clockStatusBadge').textContent = 'OUT';
+    document.getElementById('clockStatusBadge').className = 'badge';
+
+    document.getElementById('clockIndicator').className = 'status-indicator clocked-out';
+    document.getElementById('clockStatusText').textContent = 'Clocked Out';
+
+    document.getElementById('summaryOut').textContent = timeStr;
+    document.getElementById('summaryHours').textContent = `${h}h ${m}m`;
+    document.getElementById('summaryStatus').textContent = 'Completed';
+    document.getElementById('summaryStatus').className = 'pill green';
+
+    addLog(timeStr, 'var(--primary)', `<strong>Clocked Out</strong> at ${timeStr} — Total: ${h}h ${m}m`);
+    showToast('Clock-out recorded. Great work today!', 'success');
+  }
+
+  function handleClockIn() {
+    showPage('timeclock', document.querySelector('[onclick*=timeclock]'));
+    setTimeout(clockIn, 300);
+  }
+
+  function addLog(time, color, text) {
+    const log = document.getElementById('activityLog');
+    const item = document.createElement('div');
+    item.className = 'log-item';
+    item.innerHTML = `<div class="log-time">${time}</div><div class="log-dot" style="background:${color}"></div><div class="log-text">${text}</div>`;
+    log.appendChild(item);
+  }
+
+  // ─── NAVIGATION ───
+  function showPage(id, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const page = document.getElementById('page-' + id);
+    if(page) page.classList.add('active');
+    if(btn) btn.classList.add('active');
+    // Close sidebar on mobile
+    if(window.innerWidth < 769) {
+      document.getElementById('sidebar').classList.remove('mobile-open');
+      document.getElementById('sidebarOverlay').classList.remove('visible');
+    }
+    window.scrollTo(0,0);
+  }
+
+  // ─── SIDEBAR TOGGLE ───
+  let sidebarOpen = true;
+  function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const main = document.getElementById('main');
+    const overlay = document.getElementById('sidebarOverlay');
+    if(window.innerWidth < 769) {
+      sb.classList.toggle('mobile-open');
+      overlay.classList.toggle('visible');
+    } else {
+      sidebarOpen = !sidebarOpen;
+      if(sidebarOpen) {
+        sb.style.transform = '';
+        main.style.marginLeft = 'var(--sidebar-w)';
+      } else {
+        sb.style.transform = 'translateX(-100%)';
+        main.style.marginLeft = '0';
+      }
+    }
+  }
+
+  // ─── PHOTO UPLOAD ───
+  function triggerUpload(id) { document.getElementById(id).click(); }
+  function handlePhotoUpload(input, previewId, zoneId) {
+    const preview = document.getElementById(previewId);
+    if(!preview) return;
+    if(zoneId) {
+      const zone = document.getElementById(zoneId);
+      if(zone) zone.classList.add('has-file');
+    }
+    Array.from(input.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const thumb = document.createElement('div');
+        thumb.className = 'preview-thumb';
+        thumb.innerHTML = `<img src="${e.target.result}" alt="upload"><button class="remove" onclick="this.parentElement.remove()">✕</button>`;
+        preview.appendChild(thumb);
+      };
+      reader.readAsDataURL(file);
+    });
+    showToast(`${input.files.length} photo(s) ready to upload`, 'success');
+  }
+
+  // ─── TASK TOGGLE ───
+  function toggleTask(chkId, taskId) {
+    const chk = document.getElementById(chkId);
+    const task = document.getElementById(taskId);
+    chk.classList.toggle('done');
+    if(chk.classList.contains('done')) {
+      chk.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>';
+      task.style.opacity = '0.55';
+      showToast('Task marked as complete ✓', 'success');
+    } else {
+      chk.innerHTML = '';
+      task.style.opacity = '1';
+    }
+  }
+
+  // ─── ISSUE CATEGORY ───
+  function selectCat(el) {
+    document.querySelectorAll('.issue-cat-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  // ─── CHAT ───
+  function sendChat() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if(!msg) return;
+    const messages = document.getElementById('chatMessages');
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble me';
+    const t = new Date().toLocaleTimeString('en-PH', { hour:'numeric', minute:'2-digit', hour12:true });
+    bubble.innerHTML = `${msg}<div class="bubble-meta">You · ${t}</div>`;
+    messages.appendChild(bubble);
+    messages.scrollTop = messages.scrollHeight;
+    input.value = '';
+  }
+
+  // ─── MODAL ───
+  function openTaskDetail() { document.getElementById('taskModal').classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  // ─── TOAST ───
+  function showToast(msg, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const icons = { success:'✅', error:'❌', info:'ℹ️' };
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<span>${icons[type]||'💬'}</span><span>${msg}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3500);
+  }
+
+  // ─── SET TODAY DATE IN REPORT ───
+  document.getElementById('reportDate').valueAsDate = new Date();
+</script>
+</body>
+</html>
