@@ -9,6 +9,6 @@ if (!process.env.MYSQL_PUBLIC_URL) {
   throw new Error("DB_PUBLIC_URL is missing")
 }
 
-const db = drizzle(process.env.DATABASE_URL || process.env.MYSQL_PUBLIC_URL)
+const db = drizzle(process.env.MYSQL_PUBLIC_URL || process.env.DATABASE_URL)
 
 export default db;

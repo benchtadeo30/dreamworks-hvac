@@ -9,6 +9,10 @@ export const findCustomerByEmail = async (email: string) => {
         const findEmail = await db.select().from(usersTable).where(sql`${usersTable.email} = ${email}`)
         return findEmail
     } catch (error) {
+        if(error instanceof Error){
+            
+        console.log(error.message)
+        }
     throw new Error("Failed to query. There's an issue to the server")
     }
 }
