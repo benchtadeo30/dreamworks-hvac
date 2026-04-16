@@ -6,6 +6,7 @@ import { sql } from "drizzle-orm";
 
 export const findCustomerByEmail = async (email: string) => {
     try {
+        console.log('hello')
         const findEmail = await db.select().from(usersTable).where(sql`${usersTable.email} = ${email}`)
         return findEmail
     } catch (error) {
