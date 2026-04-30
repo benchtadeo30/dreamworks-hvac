@@ -8,7 +8,7 @@
   "scripts": {
     "test": "'",
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
-    "start": "npm run build && node dist/src/app.js",
+    "start": "node dist/src/app.js",
     "build": "tsc"
   },
   "devDependencies": {
