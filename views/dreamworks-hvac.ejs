@@ -981,9 +981,15 @@
                 <li><a href="#services">Services</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#testimonials">Testimonials</a></li>
-                <li><a href="/customer/quote" class="cta-button">Get Quote</a></li>
+                <li><a href="/quote" class="cta-button">Get Quote</a></li>
                 <li class="nav-login-wrapper" id="navLoginWrapper">
-                    <button class="nav-login-btn" id="navLoginToggle" aria-label="Login menu">
+                    <% if(user)  { %>
+                         <button class="nav-login-btn" id="navLoginToggle" aria-label="Login menu">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                        Customer Portal
+                    </button>
+                    <% }else{ %>
+                        <button class="nav-login-btn" id="navLoginToggle" aria-label="Login menu">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
                         Login
                         <svg class="nav-login-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1006,6 +1012,7 @@
                             <svg class="nav-login-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                         </button>
                     </div>
+                    <% } %>
                 </li>
             </ul>
             <div class="mobile-menu">
@@ -1797,9 +1804,21 @@
     <script>
         (function () {
             /* ── Nav Login Dropdown ── */
+            const navLoginToggle = document.getElementById("navLoginToggle")
             var navToggle   = document.getElementById('navLoginToggle');
             var navDropdown = document.getElementById('navLoginDropdown');
             var navWrapper  = document.getElementById('navLoginWrapper');
+
+            if(navLoginToggle.textContent.trim() === 'Customer Portal'){
+            const handleLoginToggle = () => window.location.href = "/customer";
+
+            navLoginToggle.removeEventListener("click", handleLoginToggle)
+            navLoginToggle.addEventListener("click", handleLoginToggle)
+            }
+
+            if(!navToggle) return;
+            if(!navDropdown) return;
+            if(!navWrapper) return;
 
             navToggle.addEventListener('click', function (e) {
                 e.stopPropagation();

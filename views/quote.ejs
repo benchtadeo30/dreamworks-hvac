@@ -966,7 +966,7 @@
             <div class="eula-footer">
                 <label class="eula-agree-row" for="eulaCheckbox">
                     <div class="eula-checkbox-wrap">
-                        <input type="checkbox" id="eulaCheckbox" onchange="toggleEulaBtn(this)">
+                        <input type="checkbox" id="eulaCheckbox">
                         <div class="eula-checkbox-custom">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
@@ -977,12 +977,12 @@
                     </span>
                 </label>
 
-                <button class="eula-proceed-btn" id="eulaProceedBtn" onclick="acceptEula()">
+                <button class="eula-proceed-btn" id="eulaProceedBtn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                     I Agree — Get My Free Quote
                 </button>
 
-                <span class="eula-decline-link" onclick="declineEula()">Decline &amp; Leave</span>
+                <span class="eula-decline-link">Decline &amp; Leave</span>
             </div>
 
         </div>
@@ -992,10 +992,11 @@
     <!-- Page Navigation -->
     <div class="page-nav">
         <a href="/" class="brand-logo">DREAM<span>WORKS</span></a>
-        <div class="nav-links-row">
-            <a href="/customer/quote" class="nav-pill active">📋 Get a Quote</a>
+       <% if(user) { %>
+         <div class="nav-links-row">
             <a href="/customer" class="nav-pill">🏠 Customer Portal</a>
         </div>
+       <% } %>
     </div>
 
     <!-- Logo -->
@@ -1032,33 +1033,43 @@
                         <h3>🛠️ What service do you need?</h3>
                         <div class="service-selection">
                             <div class="service-card-option">
-                                <input type="checkbox" id="s1" name="service" value="ac-installation">
+                                <input type="checkbox" id="s1" name="service" value="ac-installation" <%= old ? old.parsedServices && old.parsedServices.includes('ac-installation') ? 'checked' : null : "" %>>
                                 <label for="s1"><div class="service-icon">❄️</div><div class="service-name">AC Installation</div><div class="service-desc">New unit setup</div></label>
                             </div>
                             <div class="service-card-option">
-                                <input type="checkbox" id="s2" name="service" value="ac-repair">
+                                <input type="checkbox" id="s2" name="service" value="ac-repair" <%= old ? old.parsedServices && old.parsedServices.includes('ac-repair') ? 'checked' : null : "" %>>
                                 <label for="s2"><div class="service-icon">🔧</div><div class="service-name">AC Repair</div><div class="service-desc">Fix issues</div></label>
                             </div>
                             <div class="service-card-option">
-                                <input type="checkbox" id="s3" name="service" value="maintenance">
+                                <input type="checkbox" id="s3" name="service" value="maintenance" <%= old ? old.parsedServices && old.parsedServices.includes('maintenance') ? 'checked' : null : "" %>>
                                 <label for="s3"><div class="service-icon">✅</div><div class="service-name">Maintenance</div><div class="service-desc">Regular checkup</div></label>
                             </div>
                             <div class="service-card-option">
-                                <input type="checkbox" id="s5" name="service" value="ductwork">
+                                <input type="checkbox" id="s5" name="service" value="ductwork" <%= old ? old.parsedServices && old.parsedServices.includes('ductwork') ? 'checked' : null : "" %>>
                                 <label for="s5"><div class="service-icon">🏗️</div><div class="service-name">Ductwork</div><div class="service-desc">Installation/repair</div></label>
                             </div>
                             <div class="service-card-option">
-                                <input type="checkbox" id="s6" name="service" value="emergency">
+                                <input type="checkbox" id="s6" name="service" value="emergency" <%= old ? old.parsedServices && old.parsedServices.includes('emergency') ? 'checked' : null : "" %>>
                                 <label for="s6"><div class="service-icon">🚨</div><div class="service-name">Emergency</div><div class="service-desc">Urgent repair</div></label>
                             </div>
                         </div>
+                       <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.emptyServicesErr %></p>
+           <% } %>
+        <% } %>
                     </div>
                     <div class="form-section">
                         <h3>📝 Additional details</h3>
                         <div class="form-group">
                             <label>Describe your needs</label>
-                            <textarea name="serviceDetails" placeholder="Describe your HVAC needs, issues, or any specific requirements..."></textarea>
+                            <textarea name="serviceDetails" placeholder="Describe your HVAC needs, issues, or any specific requirements..."><%= old ? old.service_details : "" %></textarea>
                         </div>
+                         <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.emptyServicesDetailsErr || error.errServiceDetailsMin %></p>
+           <% } %>
+        <% } %>
                     </div>
                     <!--upload -->
                     <div>
@@ -1069,7 +1080,7 @@
                             -57-57-391 392v56Zm420-419-29-29 57 57-28-28Z"/></svg>Got your own design?</h3>
                     <div class="upload-box" id="uploadBox">
                         
-    <input type="file" id="fileInput" hidden>
+    <input type="file" id="fileInput" value="<%= JSON.stringify(old ? old.files || [] : "") %>" multiple hidden>
 
     <div class="upload-content">
         <div class="upload-icon">📁</div>
@@ -1078,7 +1089,11 @@
         </p>
         <span class="upload-subtext">PNG, JPG, PDF (Max 5MB)</span>
         </div>
-    <div class="file-preview" id="filePreview"></div>
+        <% if(old && old.files && old.files.length) { %>
+            <% for (const file of old.files) { %>
+                <div class="file-preview" id="filePreview"><%= file.originalname %></div>
+           <% }  %>
+        <% } %>
 
     <!-- NEW BUTTON -->
     <button class="upload-action-btn" id="uploadBtn" disabled>
@@ -1087,6 +1102,11 @@
      <a href="/registration" class="ctn-action-btn" disabled> Continue→</a>
 </div>
     </div>
+    <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.emptyFileErr || error.fileErrFormat || error.errFileLimit || error.errUploadFile %></p>
+           <% } %>
+        <% } %>
                 </div>
 
                 <!-- Step 2: Property -->
@@ -1095,41 +1115,71 @@
                         <h3>🏠 Property Type</h3>
                         <div class="property-types">
                             <div class="property-option">
-                                <input type="radio" id="p1" name="propertyType" value="residential" required>
+                                <input type="radio" id="p1" name="propertyType" value="residential" <%= old && old.chosenPropertyType === 'residential' ? 'checked' : '' %>>
                                 <label for="p1"><div class="property-icon">🏠</div><div class="service-name">Residential</div></label>
                             </div>
                             <div class="property-option">
-                                <input type="radio" id="p2" name="propertyType" value="commercial">
+                                <input type="radio" id="p2" name="propertyType" value="commercial" <%= old && old.chosenPropertyType === 'commercial' ? 'checked' : '' %>>
                                 <label for="p2"><div class="property-icon">🏢</div><div class="service-name">Commercial</div></label>
                             </div>
                             <div class="property-option">
-                                <input type="radio" id="p3" name="propertyType" value="industrial">
+                                <input type="radio" id="p3" name="propertyType" value="industrial" <%= old && old.chosenPropertyType === 'industrial' ? 'checked' : '' %>>
                                 <label for="p3"><div class="property-icon">🏭</div><div class="service-name">Industrial</div></label>
                             </div>
                         </div>
+                         <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.errPropertyTypeEmpty %></p>
+           <% } %>
+        <% } %>
                     </div>
                     <div class="form-section">
                         <h3>📍 Location</h3>
                         <div class="form-grid">
                             <div class="form-group">
                                 <label>Street Address <span class="required">*</span></label>
-                                <input type="text" name="address" placeholder="123 Main Street" required>
+                                <input type="text" name="address" value="<%= old ? old.streetAddress : "" %>" placeholder="123 Main Street">
+                                <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.errStreetAddressEmpty %></p>
+           <% } %>
+        <% } %>
                             </div>
                             <div class="form-group">
                                 <label>Barangay <span class="required">*</span></label>
-                                <input type="text" name="barangay" placeholder="Sta. Lucia" required>
+                                <input type="text" name="barangay" value="<%= old ? old.barangay : "" %>" placeholder="Sta. Lucia">
+                                <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.invalidBarangay || error.errBarangayEmpty %></p>
+           <% } %>
+        <% } %>
                             </div>
                         </div>
                         <div class="form-grid">
                             <div class="form-group">
                                 <label>City <span class="required">*</span></label>
-                                <input type="text" name="city" placeholder="Pasig City" required>
+                                <input type="text" name="city" value="<%= old ? old.city : "" %>" placeholder="Pasig City">
+                                <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.invalidCity || error.errCityEmpty %></p>
+           <% } %>
+        <% } %>
                             </div>
                             <div class="form-group">
                                 <label>Postal Code</label>
-                                <input type="text" name="postal" placeholder="1600">
+                                <input type="text" name="postal" value="<%= old ? old.postal : "" %>" placeholder="1600">
+                                 <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.errPostalFormat || error.errPostalEmpty %></p>
+           <% } %>
+        <% } %>
                             </div>
                         </div>
+                         <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red;"><%= error.errPropertyAllFieldsEmpty %></p>
+           <% } %>
+        <% } %>
                     </div>
                 </div>
 
@@ -1140,33 +1190,85 @@
                         <div class="datetime-grid">
                             <div class="form-group">
                                 <label>Preferred Date <span class="required">*</span></label>
-                                <input type="date" name="preferredDate" required>
+                                <input type="date" name="preferredDate" value="<%= old ? old.preferredDate : "" %>">
+                                <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.errDateEmpty %></p>
+           <% } %>
+        <% } %>
                             </div>
                             <div class="form-group">
                                 <label>Preferred Time <span class="required">*</span></label>
-                                <select name="preferredTime" required>
+                                <select name="preferredTime">
                                     <option value="">Select time</option>
-                                    <option>8:00 AM - 10:00 AM</option>
-                                    <option>10:00 AM - 12:00 PM</option>
-                                    <option>12:00 PM - 2:00 PM</option>
-                                    <option>2:00 PM - 4:00 PM</option>
-                                    <option>4:00 PM - 6:00 PM</option>
+                                                                    
+                                    <option value="8:00 AM - 10:00 AM"
+                                        <%= old ? old.preferredTime === "8:00 AM - 10:00 AM" ? "selected" : "" : "" %>>
+                                        8:00 AM - 10:00 AM
+                                    </option>
+
+                                    <option value="10:00 AM - 12:00 PM"
+                                        <%= old ? old.preferredTime === "10:00 AM - 12:00 PM" ? "selected" : "" : "" %>>
+                                        10:00 AM - 12:00 PM
+                                    </option>
+
+                                    <option value="12:00 PM - 2:00 PM"
+                                        <%= old ? old.preferredTime === "12:00 PM - 2:00 PM" ? "selected" : "" : "" %>>
+                                        12:00 PM - 2:00 PM
+                                    </option>
+
+                                    <option value="2:00 PM - 4:00 PM"
+                                        <%= old ? old.preferredTime === "2:00 PM - 4:00 PM" ? "selected" : "" : "" %>>
+                                        2:00 PM - 4:00 PM
+                                    </option>
+
+                                    <option value="4:00 PM - 6:00 PM"
+                                        <%= old ? old.preferredTime === "4:00 PM - 6:00 PM" ? "selected" : "" : "" %>>
+                                        4:00 PM - 6:00 PM
+                                    </option>
                                 </select>
+                                <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.errTimeEmpty %></p>
+           <% } %>
+        <% } %>
                             </div>
                         </div>
                     </div>
                     <div class="form-section">
                         <h3>⚡ Urgency Level</h3>
                         <div class="form-group">
-                            <select name="urgency" required>
+                            <select name="urgency">
                                 <option value="">Select urgency</option>
-                                <option value="emergency">🚨 Emergency – Within 24 hours</option>
-                                <option value="urgent">⚡ Urgent – Within 3 days</option>
-                                <option value="standard">📅 Standard – Within 1 week</option>
-                                <option value="flexible">🗓️ Flexible – No rush</option>
+                                <option value="emergency"
+                                <%= old ? old.urgency === "emergency" ? "selected" : "" : "" %>>
+                                🚨 Emergency – Within 24 hours
+                                </option>
+                                <option value="urgent"
+                                <%= old ? old.urgency === "urgent" ? "selected" : "" : "" %>>
+                                ⚡ Urgent – Within 3 days
+                                </option>
+                                <option value="standard"
+                                <%= old ? old.urgency === "standard" ? "selected" : "" : "" %>>
+                                📅 Standard – Within 1 week
+                                </option>
+                                <option value="flexible"
+                                <%= old ? old.urgency === "flexible" ? "selected" : "" : "" %>>
+                                🗓️ Flexible – No rush
+                                </option>
                             </select>
+                            <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.errUrgencyEmpty %></p>
+           <% } %>
+        <% } %>
                         </div>
                     </div>
+                    <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.errScheduleAllFieldsEmpty %></p>
+           <% } %>
+        <% } %>
                 </div>
 
                 <!-- Step 4: Contact -->
@@ -1176,35 +1278,72 @@
                         <div class="form-grid">
                             <div class="form-group">
                                 <label>First Name <span class="required">*</span></label>
-                                <input type="text" name="firstName" placeholder="Juan" required>
+                                <input type="text" name="firstName" value="<%= old ? old.firstName : "" %>" placeholder="Juan">
+                                 <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.errFirstNameEmpty || error.errFirstNameFormat || error.errFirstNameLimitChars %></p>
+           <% } %>
+        <% } %>
                             </div>
                             <div class="form-group">
                                 <label>Last Name <span class="required">*</span></label>
-                                <input type="text" name="lastName" placeholder="Dela Cruz" required>
+                                <input type="text" name="lastName" value="<%= old ? old.lastName : "" %>" placeholder="Dela Cruz">
+                                <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.errLastNameEmpty || error.errLastNameFormat || error.errLastNameLimitChars %></p>
+           <% } %>
+        <% } %>
                             </div>
                         </div>
                         <div class="form-grid">
                             <div class="form-group">
                                 <label>Email Address <span class="required">*</span></label>
-                                <input type="email" name="email" placeholder="juan@email.com" required>
+                                <input type="email" name="email" value="<%= old ? old.email : "" %>" placeholder="juan@email.com">
+                                <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.errEmailEmpty || error.errEmailNameFormat %></p>
+           <% } %>
+        <% } %>
                             </div>
                             <div class="form-group">
                                 <label>Phone Number <span class="required">*</span></label>
-                                <input type="tel" name="phone" placeholder="+63 9XX XXX XXXX" required>
+                                <input type="tel" name="phone" value="<%= old ? old.phone : "" %>" placeholder="+63 9XX XXX XXXX">
+                                <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.errPhoneEmpty || error.errPhoneNameFormat %></p>
+           <% } %>
+        <% } %>
                             </div>
                         </div>
                         <div class="form-group">
                             <label>How did you hear about us?</label>
                             <select name="referral">
                                 <option value="">Select option</option>
-                                <option>Facebook</option>
-                                <option>Google Search</option>
-                                <option>Referral / Friend</option>
-                                <option>Signage / Flyer</option>
-                                <option>Other</option>
+                                <option value="Facebook"
+                                <%= old ? old.referral === "Facebook" ? "selected" : "" : "" %>>
+                                Facebook
+                                </option>
+                                <option value="Google Search"
+                                <%= old ? old.referral === "Google Search" ? "selected" : "" : "" %>>
+                                Google Search
+                                </option>
+                                <option value="Referral / Friend"
+                                <%= old ? old.referral === "Referral / Friend" ? "selected" : "" : "" %>>
+                                Referral / Friend
+                                </option>
+                                <option value="Signage / Flyer"
+                                <%= old ? old.referral === "Referral / Friend" ? "selected" : "" : "" %>>
+                                Signage / Flyer
+                                </option>
+                                <option value="Other">Other</option>
                             </select>
                         </div>
                     </div>
+                    <% if(errors.length > 0){ %>
+           <% for (const error of errors) { %>
+                <p class="error" style="color: red; margin-top: 20px;"><%= error.errContactAllFieldsEmpty || error.errCreateQuote %></p>
+           <% } %>
+        <% } %>
                 </div>
 
                 <!-- Navigation -->
@@ -1226,87 +1365,379 @@
                 </div>
                 <div class="success-actions">
                     <a href="/" class="btn-portal">Back to Homepage Portal →</a>
-                    <a href="/registration" class="btn-secondary-link">👤 Create an Account</a>
+                    <% if(user) {%>
+                        <a href="/customer" class="btn-secondary-link">➡️ Go to Customer Portal</a>
+                    <% }else{ %>
+                        <a href="/registration" class="btn-secondary-link">👤 Create an Account</a>
+                    <% } %>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        let currentStep = 1;
+const upload = () => fileInput.click();
+        function run(){
+        let currentStep = parseInt(sessionStorage.getItem('currentStep')) || 1;
         const totalSteps = 4;
         const nextBtn = document.getElementById('nextBtn');
         const prevBtn = document.getElementById('prevBtn');
         const submitBtn = document.getElementById('submitBtn');
         const successMessage = document.getElementById('successMessage');
         const quoteForm = document.getElementById('quoteForm');
+        const btn = document.getElementById('eulaProceedBtn');
+        const btnDecline = document.querySelector('.eula-decline-link')
+        const eulaCheckbox = document.querySelector('#eulaCheckbox')
+        const formData = new FormData()
+            
+        const uploadBox = document.getElementById("uploadBox");
+        const fileInput = document.getElementById("fileInput");
+        const uploadBtn = document.getElementById("uploadBtn");
+        const uploadContent = document.querySelector(".upload-content")
+        
+        if(btn) btn.addEventListener("click", acceptEula)
+        if(btnDecline) btnDecline.addEventListener('click', declineEula)
+        if(eulaCheckbox) eulaCheckbox.addEventListener('change', toggleEulaBtn)
+
+        
+// Enable button function
+function enableButton() {
+    uploadBtn.disabled = false;
+    uploadBtn.classList.add("enabled");
+}
+
+
+uploadBox.removeEventListener("click", upload)
+
+// Click to open file
+uploadBox.addEventListener("click", upload);
+// File selected
+fileInput.addEventListener("change", (e) => {
+    const files = Array.from(fileInput.files);
+
+    document.querySelectorAll('.file-preview').forEach(el => el.remove());
+
+    if (files.length) {
+        files.forEach(f => {
+        const filePreview = document.createElement('div')
+        filePreview.className = 'file-preview'
+        filePreview.id = 'filePreview'
+        filePreview.textContent = "📄 " + f.name;
+        uploadContent.after(filePreview)
+        })
+        enableButton();
+    }
+});
+
+// Drag events
+uploadBox.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    uploadBox.classList.add("dragover");
+});
+
+uploadBox.addEventListener("dragleave", () => {
+    uploadBox.classList.remove("dragover");
+});
+
+uploadBox.addEventListener("drop", (e) => {
+    e.preventDefault();
+    uploadBox.classList.remove("dragover");
+
+    const file = e.dataTransfer.files;
+    fileInput.files = e.dataTransfer.files;
+
+    if (file) {
+        filePreview.textContent = "📄 " + file.name;
+        enableButton();
+    }
+});
 
         function updateProgress() {
-            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
-            document.querySelector(`.form-step[data-step="${currentStep}"]`).classList.add('active');
+    currentStep = parseInt(sessionStorage.getItem('currentStep')) || 1;
 
-            document.querySelectorAll('.step').forEach((s, i) => {
-                s.classList.remove('active', 'completed');
-                if (i + 1 < currentStep) s.classList.add('completed');
-                else if (i + 1 === currentStep) s.classList.add('active');
-            });
+    document.querySelectorAll('.form-step')
+        .forEach(s => s.classList.remove('active'));
 
-            const pct = ((currentStep - 1) / (totalSteps - 1)) * 100;
-            document.getElementById('progressLine').style.width = pct + '%';
+    const activeStep = document.querySelector(
+        `.form-step[data-step="${currentStep}"]`
+    );
 
-            prevBtn.style.display = currentStep === 1 ? 'none' : 'inline-flex';
-            nextBtn.style.display = currentStep === totalSteps ? 'none' : 'inline-flex';
-            submitBtn.style.display = currentStep === totalSteps ? 'inline-flex' : 'none';
-        }
+    if (activeStep) {
+        activeStep.classList.add('active');
+    }
 
-        function validateStep(step) {
+    document.querySelectorAll('.step').forEach((s, i) => {
+        s.classList.remove('active', 'completed');
+
+        if (i + 1 < currentStep) s.classList.add('completed');
+        else if (i + 1 === currentStep) s.classList.add('active');
+    });
+
+    const pct = ((currentStep - 1) / 3) * 100;
+    document.getElementById('progressLine').style.width = pct + '%';
+
+    prevBtn.style.display = currentStep === 1 ? 'none' : 'inline-flex';
+    nextBtn.style.display = currentStep === 4 ? 'none' : 'inline-flex';
+    submitBtn.style.display = currentStep === 4 ? 'inline-flex' : 'none';
+}
+
+        async function validateStep(step) {
             const fs = document.querySelector(`.form-step[data-step="${step}"]`);
-            if (step === 1) {
-                if (!fs.querySelectorAll('input[name="service"]:checked').length) {
-                    alert('Please select at least one service'); return false;
-                }
-            }
-            const required = fs.querySelectorAll('[required]');
+            const serviceDetails = document.querySelector("textarea[name=serviceDetails]").value.trim()
+            const fileInput = document.querySelector("input[id=fileInput]")
+          formData.delete("files")
             let ok = true;
-            required.forEach(input => {
-                if (!input.value.trim() && input.type !== 'checkbox' && input.type !== 'radio') {
-                    input.style.borderColor = 'var(--error)'; ok = false;
-                } else if (input.type === 'radio') {
-                    if (!fs.querySelector(`input[name="${input.name}"]:checked`)) ok = false;
-                } else {
-                    input.style.borderColor = 'var(--light-gray)';
-                }
-            });
-            if (!ok) alert('Please fill in all required fields');
-            return ok;
+            if (step === 1) {
+                let chooseServices = [];
+                  fs.querySelectorAll("input[type=checkbox]").forEach(service => {
+                    if(service.checked){
+                        chooseServices.push(service.value)
+                    }
+                  })
+                  formData.set("service_details", serviceDetails)
+                for (const file of fileInput.files) {
+                    formData.append("files", file)
+                    }
+
+                  formData.set("services", JSON.stringify(chooseServices))
+                  
+                  try {
+                   const response = await fetch("quote/1", {
+                        method: 'POST',
+                        body: formData,
+                    })
+                    
+                    if(!response.ok){
+                        const res = await response.text() 
+                        ok = false
+                         const filePreview = document.querySelectorAll("#filePreview")
+                        if(filePreview) filePreview.forEach(f => f.remove())
+                        document.body.innerHTML = res;
+                        console.log(res)
+                        const backdrop = document.getElementById('eulaBackdrop');
+                        if(backdrop) backdrop.style.display = 'none'
+                        return ok;
+                    }
+
+                    const data = await response.text()
+                    document.querySelectorAll(".error").forEach(err => err.remove())
+                    ok = true;
+                    return ok;
+                  } catch (error) {
+                    console.log(error)
+                    alert("Cannot connect to the server!")
+                  }
+            }
+
+            if (step === 2) {
+                const streetAddress = document.querySelector('input[name=address]').value.trim()
+                const barangay = document.querySelector('input[name=barangay]').value.trim()
+                const city = document.querySelector('input[name=city]').value.trim()
+                const postal = document.querySelector('input[name=postal]').value.trim()
+                const propertyTypes = [...document.querySelectorAll("input[name=propertyType]")]
+    
+                const filterPropertyType = propertyTypes.filter(property => property.checked)
+                const chosenPropertyType = filterPropertyType.length > 0 ? filterPropertyType[0].value : ""
+
+                try {
+                   const response = await fetch("quote/2", {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            streetAddress,
+                            barangay,
+                            city,
+                            postal,
+                            chosenPropertyType,
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                    })
+
+                    
+                    if(!response.ok){
+                        const res = await response.text() 
+                        ok = false
+                        document.body.innerHTML = res;
+                        console.log(res)
+                        const backdrop = document.getElementById('eulaBackdrop');
+                        if(backdrop) backdrop.style.display = 'none'
+                        return ok;
+                    }
+
+                    const data = await response.text()
+                    document.querySelectorAll(".error").forEach(err => err.remove())
+                    ok = true;
+                    return ok;
+                  } catch (error) {
+                    console.log(error)
+                    alert("Cannot connect to the server!")
+                  }
+            }
+
+            if(step === 3){
+                const preferredDate = document.querySelector('input[name=preferredDate]').value.trim()
+                const preferredTime = document.querySelector('select[name=preferredTime]').value.trim()
+                const urgency = document.querySelector('select[name=urgency]').value.trim()
+                formData.set('preferredDate', preferredDate)
+                formData.set('preferredTime', preferredTime)
+                formData.set('urgency', urgency)
+
+                try {
+                   const response = await fetch("quote/3", {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            preferredDate,
+                            preferredTime,
+                            urgency,
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                    })
+
+                    
+                    if(!response.ok){
+                        const res = await response.text() 
+                        ok = false
+                        document.body.innerHTML = res;
+                        console.log(res)
+                        const backdrop = document.getElementById('eulaBackdrop');
+                        if(backdrop) backdrop.style.display = 'none'
+                        return ok;
+                    }
+
+                    const data = await response.text()
+                    document.querySelectorAll(".error").forEach(err => err.remove())
+                    ok = true;
+                    return ok;
+                  } catch (error) {
+                    console.log(error)
+                    alert("Cannot connect to the server!")
+                  }
+            }
+
+            if(step === 4){
+                const firstName = document.querySelector("input[name=firstName]").value.trim()
+                const lastName = document.querySelector("input[name=lastName]").value.trim()
+                const email = document.querySelector("input[name=email]").value.trim()
+                const phone = document.querySelector("input[name=phone]").value.trim()
+                const referral = document.querySelector("select[name=referral]").value.trim()
+
+                try {
+                   const response = await fetch("quote/4", {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            firstName,
+                            lastName,
+                            email,
+                            phone,
+                            referral,
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                    })
+
+                    
+                    if(!response.ok){
+                        const res = await response.text() 
+                        ok = false
+                        document.body.innerHTML = res;
+                        const backdrop = document.getElementById('eulaBackdrop');
+                        if(backdrop) backdrop.style.display = 'none'
+                        return ok;
+                    }
+
+                    const data = await response.text()
+                    document.querySelectorAll(".error").forEach(err => err.remove())
+                    ok = true;
+                    return ok;
+                  } catch (error) {
+                    console.log(error)
+                    alert("Cannot connect to the server!")
+                  }
+
+            }
+          
+        }
+        document.addEventListener('click', async (e) => {
+    const nextBtn = e.target.closest('#nextBtn');
+    const prevBtn = e.target.closest('#prevBtn');
+
+    if (!nextBtn && !prevBtn) return;
+
+    e.preventDefault();
+
+    // prevent double clicks safely
+    if (window.isSubmitting) return;
+    window.isSubmitting = true;
+
+    try {
+
+        // 👉 NEXT BUTTON
+        if (nextBtn) {
+    try {
+        const isValid = await validateStep(currentStep);
+        if (!isValid){
+            updateProgress()
+            run()
+            return;
         }
 
-        nextBtn.addEventListener('click', () => {
-            if (validateStep(currentStep)) { currentStep++; updateProgress(); window.scrollTo({top:0,behavior:'smooth'}); }
-        });
+        currentStep = Math.min(currentStep + 1, 4);
 
-        prevBtn.addEventListener('click', () => {
-            currentStep--; updateProgress(); window.scrollTo({top:0,behavior:'smooth'});
-        });
+        sessionStorage.setItem('currentStep', String(currentStep));
 
-        quoteForm.addEventListener('submit', e => {
-            e.preventDefault();
-            if (!validateStep(currentStep)) return;
+        updateProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            const fd = new FormData(quoteForm);
-            const services = fd.getAll('service');
-            const data = {};
-            for (let [k, v] of fd.entries()) { if (k !== 'service') data[k] = v; }
+    } finally {
+        window.isSubmitting = false;
+    }
+}
 
-            submitBtn.innerHTML = '<div class="spinner"></div> Processing...';
-            submitBtn.disabled = true;
+        // 👉 PREV BUTTON
+        if (prevBtn) {
+            if (currentStep > 1) {
+                currentStep--;
+                sessionStorage.setItem('currentStep', currentStep);
+                updateProgress();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
 
-            setTimeout(() => {
-                quoteForm.style.display = 'none';
-                document.querySelector('.progress-container').style.display = 'none';
-                successMessage.classList.add('active');
+    } finally {
+        // ALWAYS release lock even if error happens
+        window.isSubmitting = false;
+    }
+});
 
-                document.getElementById('quoteSummary').innerHTML = `
+       const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!(await validateStep(currentStep))) {
+        run();
+        return;
+    }
+
+    const fd = new FormData(quoteForm);
+    const services = fd.getAll('service');
+    const data = {};
+
+    for (let [k, v] of fd.entries()) {
+        if (k !== 'service') data[k] = v;
+    }
+
+    submitBtn.innerHTML = '<div class="spinner"></div> Processing...';
+    submitBtn.disabled = true;
+
+    setTimeout(() => {
+        quoteForm.style.display = 'none';
+        document.querySelector('.progress-container').style.display = 'none';
+        successMessage.classList.add('active');
+
+       document.getElementById('quoteSummary').innerHTML = `
                     <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${data.firstName} ${data.lastName}</span></div>
                     <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">${data.email}</span></div>
                     <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">${data.phone}</span></div>
@@ -1315,10 +1746,19 @@
                     <div class="detail-row"><span class="detail-label">Date & Time</span><span class="detail-value">${data.preferredDate} · ${data.preferredTime}</span></div>
                     <div class="detail-row"><span class="detail-label">Urgency</span><span class="detail-value">${data.urgency}</span></div>
                 `;
-                submitBtn.innerHTML = 'Submit Request ✓';
-                submitBtn.disabled = false;
-            }, 1500);
-        });
+
+        submitBtn.innerHTML = 'Submit Request ✓';
+        submitBtn.disabled = false;
+
+        sessionStorage.setItem("currentStep", JSON.stringify(1));
+
+        quoteForm.removeEventListener('submit', handleSubmit);
+
+    }, 1500);
+};
+
+quoteForm.removeEventListener('submit', handleSubmit);
+quoteForm.addEventListener('submit', handleSubmit);
 
         const today = new Date().toISOString().split('T')[0];
         document.querySelectorAll('input[type="date"]').forEach(i => i.setAttribute('min', today));
@@ -1327,7 +1767,6 @@
             i.addEventListener('input', () => i.style.borderColor = 'var(--light-gray)');
         });
 
-        updateProgress();
 
         // ── EULA Functions ──
         function toggleEulaBtn(checkbox) {
@@ -1367,53 +1806,10 @@
             void modal.offsetWidth; // reflow
             modal.style.animation = 'eulaShake 0.4s ease';
         });
+
+              updateProgress();
+    }
+       run()
     </script>
-    <script>
-const uploadBox = document.getElementById("uploadBox");
-const fileInput = document.getElementById("fileInput");
-const filePreview = document.getElementById("filePreview");
-const uploadBtn = document.getElementById("uploadBtn");
-
-// Enable button function
-function enableButton() {
-    uploadBtn.disabled = false;
-    uploadBtn.classList.add("enabled");
-}
-
-// Click to open file
-uploadBox.addEventListener("click", () => fileInput.click());
-
-// File selected
-fileInput.addEventListener("change", () => {
-    const file = fileInput.files[0];
-    if (file) {
-        filePreview.textContent = "📄 " + file.name;
-        enableButton();
-    }
-});
-
-// Drag events
-uploadBox.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    uploadBox.classList.add("dragover");
-});
-
-uploadBox.addEventListener("dragleave", () => {
-    uploadBox.classList.remove("dragover");
-});
-
-uploadBox.addEventListener("drop", (e) => {
-    e.preventDefault();
-    uploadBox.classList.remove("dragover");
-
-    const file = e.dataTransfer.files[0];
-    fileInput.files = e.dataTransfer.files;
-
-    if (file) {
-        filePreview.textContent = "📄 " + file.name;
-        enableButton();
-    }
-});
-</script>
 </body>
 </html>

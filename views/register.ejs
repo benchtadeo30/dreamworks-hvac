@@ -405,6 +405,7 @@
                     <input type="text" name="regEmail" placeholder="juan@email.com">
                 </div>
                 <p id="emailError" style="color: red; margin-block: 15px;"></p>
+                <p id="emailExistsError" style="color: red; margin-block: 15px;"></p>
                 <div class="form-group">
                     <label>Phone Number <span class="required">*</span></label>
                     <input type="tel" name="regPhone" placeholder="+639123456789">
@@ -522,7 +523,7 @@
 
                 
                 const response = await res.json()
-               
+                
                 btn.disabled = false;
                 btn.innerHTML = 'Create My Account →'
                 if(!res.ok){
@@ -537,6 +538,7 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("errAllFields").textContent = response.error
                             return;
                         }
@@ -549,6 +551,7 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("fnameError").textContent = response.error
                             return;
                         }
@@ -561,6 +564,7 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("fnameError").textContent = response.error
                             return;
                         }
@@ -573,6 +577,7 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("fnameError").textContent = response.error
                             return;
                         }
@@ -585,6 +590,7 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("lnameError").textContent = response.error
                             return;
                         }
@@ -597,6 +603,7 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("lnameError").textContent = response.error
                             return;
                         }
@@ -609,6 +616,7 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("lnameError").textContent = response.error
                             return;
                         }
@@ -621,7 +629,21 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("emailError").textContent = response.error
+                            return;
+                        }
+                        if(response.error === 'Email already exists!'){
+                            document.getElementById("errAllFields").textContent = ""
+                            document.getElementById("fnameError").textContent = ""
+                            document.getElementById("lnameError").textContent = ""
+                            document.getElementById("emailError").textContent = ""
+                            document.getElementById("phoneError").textContent = ""
+                            document.getElementById("pwdError").textContent = ""
+                            document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("termsError").textContent = ""
+                            document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = response.error
                             return;
                         }
                         if(response.error === 'Invalid Email!'){
@@ -633,6 +655,7 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("emailError").textContent = response.error
                             return;
                         }
@@ -645,6 +668,7 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("phoneError").textContent = response.error
                             return;
                         }
@@ -657,6 +681,7 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("phoneError").textContent = response.error
                             return;
                         }
@@ -669,6 +694,7 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("pwdError").textContent = response.error
                             return;
                         }
@@ -681,6 +707,7 @@
                             document.getElementById("pwdError").textContent = ""
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("termsError").textContent = response.error
                             return;
                         }
@@ -693,6 +720,7 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("pwdError").textContent = response.error
                             passwordStrength = response.pwd_score
                             handlePasswordInput()
@@ -707,6 +735,7 @@
                             document.getElementById("pwdError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("pwd_cfError").textContent = response.error
                             return;
                         }
@@ -719,6 +748,7 @@
                             document.getElementById("pwdError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("pwd_cfError").textContent = response.error
                             return;
                         }
@@ -731,6 +761,7 @@
                             document.getElementById("pwdError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("pwd_cfError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
                             document.getElementById("regError").textContent = response.error
                             return;
                         }
@@ -746,6 +777,7 @@
                             document.getElementById("pwd_cfError").textContent = ""
                             document.getElementById("termsError").textContent = ""
                             document.getElementById("regError").textContent = ""
+                            document.getElementById("emailExistsError").textContent = ""
 
                             passwordStrength = response.pwd_score
                             handlePasswordInput()

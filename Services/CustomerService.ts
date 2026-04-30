@@ -1,19 +1,13 @@
 import bcrypt from "bcryptjs";
 import { usersTable } from "../src/db/schema";
 import db from "../src/db";
-import { customerDetails } from "../routes/customer";
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 export const findCustomerByEmail = async (email: string) => {
     try {
-        console.log('hello')
-        const findEmail = await db.select().from(usersTable).where(sql`${usersTable.email} = ${email}`)
+        const findEmail = await db.select().from(usersTable).where(eq(usersTable.email, email))
         return findEmail
     } catch (error) {
-        if(error instanceof Error){
-            
-        console.log(error.message)
-        }
     throw new Error("Failed to query. There's an issue to the server")
     }
 }

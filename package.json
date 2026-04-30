@@ -13,6 +13,8 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
+    "@types/express-session": "^1.19.0",
+    "@types/multer": "^2.1.0",
     "@types/node": "^25.6.0",
     "@types/validator": "^13.15.10",
     "drizzle-kit": "^0.31.10",
@@ -20,12 +22,19 @@
     "typescript": "^6.0.2"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1037.0",
+    "@aws-sdk/lib-storage": "^3.1038.0",
+    "@inngest/workflow-kit": "^0.1.3",
+    "axios": "^1.15.2",
     "bcryptjs": "^3.0.3",
-    "dotenv": "^17.4.1",
+    "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "ejs": "^5.0.1",
     "env": "^0.0.2",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "inngest": "^4.2.4",
+    "multer": "^2.1.1",
     "mysql2": "^3.22.0",
     "validator": "^13.15.35"
   }

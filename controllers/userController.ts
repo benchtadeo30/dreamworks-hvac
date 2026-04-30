@@ -137,7 +137,6 @@ export const registerUser = async (
       role: "customer",
       terms_accepted: regTermsConditions,
     });
-
     return res.status(200).json({
       msg: "Registered Successfully!",
       pwd_score: pwdScore,

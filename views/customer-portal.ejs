@@ -962,15 +962,12 @@
     <div class="portal-topbar">
         <div class="topbar-left">
             <a href="/" class="brand">DREAM<span>WORKS</span></a>
-            <nav class="topbar-nav">
-                <a href="/registration" class="topbar-link outbound">👤 Register</a>
-            </nav>
         </div>
         <div class="topbar-right">
             <div class="greeting-text">
                 Logged in as <strong id="portalGreeting">Customer</strong>
             </div>
-            <a href="/" class="topbar-btn">← Sign Out</a>
+            <div class="topbar-btn">← Sign Out</div>
         </div>
     </div>
 
@@ -1001,7 +998,7 @@
                 <button class="qbtn qbtn-ghost" onclick="switchTab('progress', document.querySelectorAll('.portal-tab')[2])">
                     📊 Check Project Status
                 </button>
-                <a href="/customer/quote" class="qbtn qbtn-ghost">📋 Request a New Quote</a>
+                <a href="/quote" class="qbtn qbtn-ghost">📋 Request a New Quote</a>
             </div>
 
             <div class="dashboard-layout">
@@ -1493,6 +1490,24 @@
 
     <script>
         // Restore greeting from session
+        const topbarBtn = document.querySelector(".topbar-btn")
+        topbarBtn.addEventListener("click", async () => {
+           const isSignOut = confirm("Are you sure you want to sign out? This action cannot be reverted.")
+           if(isSignOut){
+             try {
+                const response = await fetch("customer/signout", {method: 'GET'})
+                if(!response.ok){
+                    throw Error;
+                }
+                const res = await response.url;
+                window.location.href = res
+            } catch (error) {
+                alert("Cannot signout. There's a problem on a server!")
+            }
+           }else{
+            alert("Signout Cancelled.")
+           }
+        })
         const name = sessionStorage.getItem('customerName');
         if (name) document.getElementById('portalGreeting').textContent = name;
 

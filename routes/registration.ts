@@ -4,8 +4,6 @@ import { registerUser } from "../controllers/userController";
 
 const registrationRouter = express.Router();
 
-
-
 registrationRouter.get('/', (req, res) => {
  res.render('register')
 })

@@ -13,13 +13,27 @@ export const customerLogin = async (
   next: NextFunction
 ) => {
   const { email, password } = req.body;
+  
+// try {
+//     const response = await fetch('http://localhost:5678/webhook-test/b4ef6722-34f8-48a9-accb-a135a5c0dbf0', {
+//   method: 'POST',
+//   headers: { 'Content-Type': 'application/json' },
+//   body: JSON.stringify({ email, password })
+// });
 
-  if (!validator.isEmail(email)) {
+// const resp = await response.json();
+// console.log('scsdc')
+// } catch (error) {
+//   console.log('cant connect to n8n')
+//   return next(new AppError("Can't connect to n8n", 400));
+// }
+
+  if (!validator.isEmail(email.trim())) {
     return next(new AppError("Please enter a valid email.", 400));
   }
 
   try {
-    const findEmail = await findCustomerByEmail(email);
+    const findEmail = await findCustomerByEmail(email.trim());
 
     if (!findEmail.length || !findEmail[0]) {
       return next(new AppError("Email does not exist!", 400));
@@ -36,8 +50,12 @@ export const customerLogin = async (
           new AppError("Password does not match! Please try again.", 400)
         );
       }
-
-      return res.status(200).json({ msg: "Login Successfully!" });
+      req.session.user = {
+      sessionID: req.sessionID,
+      email,
+    }
+    console.log(req.session.user)
+      return res.status(200).json({ success: "Login Successfully!" });
     } catch (error) {
       if (error instanceof Error) {
         return next(new AppError(error.message, 400));
@@ -51,3 +69,19 @@ export const customerLogin = async (
     return next(new AppError("Something went wrong.", 500));
   }
 };
+
+
+export const customerSignOut = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+     req.session.destroy((err) => {
+     if (err) {
+      return next(new AppError("Failed to logout", 500));
+    }
+
+    res.clearCookie("connect.sid");
+   return res.redirect('/');
+  });
+}

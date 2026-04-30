@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response }  from "express";
-import { customerLogin } from "../controllers/customerController";
+import { customerLogin, customerSignOut } from "../controllers/customerController";
+import { AppError } from "../utils/AppError";
 
 const customerRouter = express.Router();
 
@@ -9,11 +10,11 @@ export interface customerDetails {
 }
 
 customerRouter.get('/', (req, res) => {
-    res.render('customer-portal')
-})
-
-customerRouter.get('/quote', (req, res) => {
-    res.render('customer-portal-quote')
+     console.log("SESSION:", req.session);
+    if(req.session.user){
+       return res.render('customer-portal')
+    }
+    return res.redirect("/")
 })
 
 customerRouter.get('/login', (req, res) => {
@@ -21,5 +22,6 @@ customerRouter.get('/login', (req, res) => {
 })
 
 customerRouter.post('/login', customerLogin)
+customerRouter.get('/signout', customerSignOut)
 
 export default customerRouter;
